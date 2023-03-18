@@ -1,0 +1,5 @@
+/WinSniffer/bin/
+/WinSniffer/obj/
+/WinSniffer/.vs/
+/WinSniffer/WinSniffer/obj/
+*.DS_Store
