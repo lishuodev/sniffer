@@ -48,6 +48,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.checkBoxAutoScroll = new System.Windows.Forms.CheckBox();
+            this.columnLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -114,6 +115,7 @@
             this.columnSrc,
             this.columnDst,
             this.columnProtocal,
+            this.columnLength,
             this.columnInfo});
             this.listViewPacket.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewPacket.HideSelection = false;
@@ -268,6 +270,10 @@
             this.checkBoxAutoScroll.Text = "自动滚动";
             this.checkBoxAutoScroll.UseVisualStyleBackColor = true;
             // 
+            // columnLength
+            // 
+            this.columnLength.Text = "Length";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -322,6 +328,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxAutoScroll;
+        private System.Windows.Forms.ColumnHeader columnLength;
     }
 }
 
