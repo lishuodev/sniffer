@@ -18,7 +18,6 @@ namespace WinSniffer
     // 主窗体
     public partial class MainForm : Form
     {
-        private DeviceForm deviceForm;
         private ICaptureDevice device;
         private System.Threading.Thread backgroundThread; // 监听线程
         private PacketArrivalEventHandler arrivalEventHandler; // 包到达事件处理句柄
@@ -34,7 +33,9 @@ namespace WinSniffer
         private PacketWrapper rawPacket;
 
         private Dictionary<int, ParsedPacket> parsedPacketDict;
+        private Dictionary<int, ParsedEthernetPacket> parsedPacketDict2;
         private ParsedPacket curPacket;
+        private ParsedEthernetPacket curPacket2;
         private const int threadDelay = 100;
 
         public MainForm()
@@ -97,6 +98,7 @@ namespace WinSniffer
             startTime = new PosixTimeval(DateTime.Now);
             packetStrings = new Queue<PacketWrapper>();
             parsedPacketDict = new Dictionary<int, ParsedPacket>();
+            parsedPacketDict2 = new Dictionary<int, ParsedEthernetPacket>();
 
             backgroundThreadStop = false;
             backgroundThread = new System.Threading.Thread(BackgroundThread);
@@ -166,7 +168,7 @@ namespace WinSniffer
                             foreach (var packet in curQueue)
                             {
                                 count++;
-                                ParsedPacket parsed = ParsePacket(count, packet);
+                                ParsedPacket parsed = NetParser.ParsePacket(count, packet);
                                 parsedPacketDict.Add(parsed.id, parsed);
                                 item = new ListViewItem(count.ToString());
                                 item.SubItems.Add(parsed.time.ToString());
@@ -185,7 +187,12 @@ namespace WinSniffer
                                 item.SubItems.Add(parsed.info);
                                 //item.SubItems.Add(parsed.hex);
                                 listViewPacket.Items.Add(item);
-                                
+
+                                //自定义解析
+                                ParsedEthernetPacket parsed2 = NetParser.ParseEthernetFrame(count, packet);
+                                parsedPacketDict2.Add(parsed2.frame, parsed2);
+                                // TBD
+
                             }
                             if (checkBoxAutoScroll.Checked)
                             {
@@ -198,113 +205,58 @@ namespace WinSniffer
             }
         }
 
-        // 解析后的数据包结构体
-        private class ParsedPacket
+        private void OnSelectPacketChanged()
         {
-            public int id;
-            public int length;
-
-            public string hex;
-            public string eth;
-            public string ip;
-            public string tcp;
-            public string udp;
-
-            public decimal time;
-            // ETH
-            public PhysicalAddress MACsrc;
-            public PhysicalAddress MACdst;
-            // IP
-            public IPAddress IPsrc;
-            public IPAddress IPdst;
-            public int IPtimeToLive;
-
-            public string protocal;
-            // TCP
-            public ushort TCPportsrc;
-            public ushort TCPportdst;
-            public bool TCPsync;
-            public bool TCPfin;
-            public bool TCPack;
-            public ushort TCPwindowsize;
-            public uint TCPackno;
-            public uint TCPseqno;
-            // UDP
-            public ushort UDPportsrc;
-            public ushort UDPportdst;
-
-            public string info;
-        }
-
-        // 解析数据包
-        private ParsedPacket ParsePacket(int id, RawCapture raw)
-        {
-            ParsedPacket parsed = new ParsedPacket();
-            parsed.id = id;
-            parsed.time = raw.Timeval.Value - startTime.Value;
-            var packet = PacketDotNet.Packet.ParsePacket(raw.LinkLayerType, raw.Data);
-            parsed.hex = packet.PrintHex();
-            parsed.length = packet.TotalPacketLength;
-            if (packet is PacketDotNet.EthernetPacket eth)
+            if (listViewPacket.SelectedIndices.Count > 0)
             {
-                parsed.eth = eth.ToString();
-                parsed.MACsrc = eth.SourceHardwareAddress;
-                parsed.MACdst = eth.DestinationHardwareAddress;
+                // 更新右边
+                ListViewItem item = listViewPacket.SelectedItems[0];
+                int id = int.Parse(item.SubItems[0].Text);
+                curPacket = parsedPacketDict[id];
+                //textBoxHex.Text = curPacket.hex;
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("protocol:" + curPacket.protocal);
+                sb.AppendLine("TTL:" + curPacket.IPtimeToLive);
+                textBoxHex.Text = sb.ToString();
 
-                var ip = packet.Extract<PacketDotNet.IPPacket>();
-                if (ip != null)
+                // 更新左边
+                listBoxParse.Items.Clear();
+                //StringBuilder sb = new StringBuilder();
+                //sb.Append(string.Format("Frame {0}: {1} bytes captured ({2} bits) on interface {3}", id, curPacket.length, curPacket.length*8, device.Name));
+
+                //listBoxParse.Items.Add(sb.ToString());
+
+                curPacket2 = parsedPacketDict2[id];
+                if (curPacket2.hex != null)
                 {
-                    parsed.ip = ip.ToString();
-                    parsed.IPsrc = ip.SourceAddress;
-                    parsed.IPdst = ip.DestinationAddress;
-                    parsed.IPtimeToLive = ip.TimeToLive;
-
-                    var tcp = packet.Extract<PacketDotNet.TcpPacket>();
-                    if (tcp != null)
-                    {
-                        parsed.tcp = tcp.ToString();
-                        parsed.protocal = "TCP";
-
-                        parsed.TCPportsrc = tcp.SourcePort;
-                        parsed.TCPportdst = tcp.DestinationPort;
-                        parsed.TCPsync = tcp.Synchronize;
-                        parsed.TCPfin = tcp.Finished;
-                        parsed.TCPack = tcp.Acknowledgment;
-                        parsed.TCPwindowsize = tcp.WindowSize;
-                        parsed.TCPackno = tcp.AcknowledgmentNumber;
-                        parsed.TCPseqno = tcp.SequenceNumber;
-
-                        // info
-                        //StringBuilder sb = new StringBuilder();
-                        //sb.Append(parsed.TCPportsrc);
-                        //sb.Append(" → ");
-                        //sb.Append(parsed.TCPportdst);
-                        //if (parsed.TCPack)
-                        //{
-                        //    sb.Append(" [ACK]");
-                        //}
-                        //sb.Append(" Seq=");
-                        //sb.Append(parsed.TCPseqno);
-                        //sb.Append(" Ack=");
-                        //sb.Append(parsed.TCPackno);
-                        //sb.Append(" Win=");
-                        //sb.Append(parsed.TCPwindowsize);
-                        //parsed.info = sb.ToString();
-                    }
-
-                    var udp = packet.Extract<PacketDotNet.UdpPacket>();
-                    if (udp != null)
-                    {
-                        parsed.udp = udp.ToString();
-                        parsed.protocal = "UDP";
-
-                        parsed.UDPportsrc = udp.SourcePort;
-                        parsed.UDPportdst = udp.DestinationPort;
-                    }
+                    listBoxParse.Items.Add(curPacket2.hex);
                 }
 
+                listBoxParse.Items.Add("Destination Mac:" + curPacket2.dstMac.ToString());
+                listBoxParse.Items.Add("Source Mac:" + curPacket2.srcMac.ToString());
+                listBoxParse.Items.Add("EtherType(HEX):" + curPacket2.etherTypeHex);
+                listBoxParse.Items.Add("EtherType:" + curPacket2.etherTypeString);
+                listBoxParse.Items.Add("FrameType:" + curPacket2.frameType);
+                listBoxParse.Items.Add("IP(HEX):" + curPacket2.ipHex);
+
+                ParsedIpPacket ipPacket = curPacket2.ipPacket;
+                if (ipPacket != null)
+                {
+                    listBoxParse.Items.Add("IPVersion:" + ipPacket.version.ToString());
+                    listBoxParse.Items.Add("IHL:" + ipPacket.IHL);
+                    listBoxParse.Items.Add("ToS:" + ipPacket.ToS);
+                    listBoxParse.Items.Add("TotalLength:" + ipPacket.totalLength);
+                    listBoxParse.Items.Add("Identification:" + ipPacket.identification);
+                    listBoxParse.Items.Add("Flags:" + ipPacket.flags);
+                    listBoxParse.Items.Add("FragmentOffset:" + ipPacket.fragmentOffset);
+                    listBoxParse.Items.Add("TTL:" + ipPacket.TTL);
+                    listBoxParse.Items.Add("Protocal:" + ipPacket.protocol.ToString());
+                    listBoxParse.Items.Add("HeaderChecksum:" + ipPacket.headerChecksum);
+                    listBoxParse.Items.Add("Source IP:" + ipPacket.srcIp.ToString());
+                    listBoxParse.Items.Add("Destination IP:" + ipPacket.dstIp.ToString());
+
+                }
             }
-            return parsed;
         }
 
         private void OnPacketArrival(object sender, PacketCapture e)
@@ -332,139 +284,12 @@ namespace WinSniffer
             StartCapture();
         }
 
-        public class PacketWrapper
-        {
-            public RawCapture p;
-            public int No { get; private set; } // 序号
-            public PosixTimeval Time { get { return p.Timeval; } } // 时间
-            //public string Data { get { return BitConverter.ToString(p.Data).Replace("-"," "); } }
-            public string Source { get { return ((EthernetPacket)p.GetPacket()).SourceHardwareAddress.ToString(); } }
-            public string Destination { get { return ((EthernetPacket)p.GetPacket()).DestinationHardwareAddress.ToString(); } }
-            public int Length { get { return p.Data.Length; } }
-
-            public string Protocal { get { return "protocal"; } }
-            public LinkLayers LinkLayerType { get { return p.LinkLayerType; } }
-            public PacketWrapper(int no, RawCapture p)
-            {
-                this.No = no;
-                this.p = p;
-            }
-        }
-
-        // 解析EthernetII协议
-        private void ParseEthernetII()
-        {
-
-        }
-
-        // 手动解析
-        private void OnSelectionChanged(object sender, EventArgs e)
-        {
-            //if (dataGridView.SelectedCells.Count == 0)
-            //    return;
-
-            //rawPacket = (PacketWrapper)dataGridView.Rows[dataGridView.SelectedCells[0].RowIndex].DataBoundItem;
-            //var packet = Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
-            //textBoxDetail.Text = packet.ToString()
-            //
-
-            //textBoxBinary.Text = "";
-            //byte[] bytes = rawPacket.p.Data;
-            //int len = bytes.Length; // 到这里是没问题的
-
-            ////StringBuilder sb = new StringBuilder();
-            //string hex = HexFromByte(bytes);
-            //textBoxBinary.Text = hex;
-            ////int len2 = sb.Length;
-            ////string binary = sb.ToString();
-            ////int len3 = binary.Length;
-            ////textBoxBinary.Text += binary;
-            ////string binary = curPacketWrapper.Data.Replace(" ", "");
-            //textBoxBot.Text = "";
-            ////textBoxBot.Text += "Source: " + binary.Substring(0, 16) + Environment.NewLine;
-            ////textBoxBot.Text += "Destination: " + binary.Substring(16, 16) + Environment.NewLine;
-            ////byte[] bytes = curPacketWrapper.p.Data;
-            //textBoxBot.Text += "Length: " + len + Environment.NewLine;
-
-            //Analyzed analyzed = new Analyzed();
-            //analyzed.dstMac = hex.Substring(0, 12);
-            //analyzed.srcMac = hex.Substring(12, 12);
-            //analyzed.etherType = hex.Substring(24, 4);
-            ////analyzed.version = hex.Substring(28, 1);
-            ////analyzed.IHL = int.Parse(hex.Substring(28, 1));
-            //analyzed.TOS = hex.Substring(29, 1);
-            //analyzed.totalLength = hex.Substring(30, 2);
-            //analyzed.id = hex.Substring(32, 2);
-            ////analyzed.flag
-            ////analyzed.fragOffset
-            //analyzed.TTL = hex.Substring(36, 1);
-            //analyzed.protocal = hex.Substring(37, 1);
-            //analyzed.headerChecksum = hex.Substring(38, 2);
-            //analyzed.srcAddr = hex.Substring(40, 4);
-            //analyzed.dstAddr = hex.Substring(44, 4);
-            ////analyzed.options = hex.Substring(48, 40);
-            ////analyzed.data
-
-            //textBoxBot.Text += "dstMac: " + analyzed.dstMac + Environment.NewLine;
-            //textBoxBot.Text += "srcMac: " + analyzed.srcMac + Environment.NewLine;
-            //textBoxBot.Text += "etherType: " + analyzed.etherType + Environment.NewLine;
-            //textBoxBot.Text += "TOS: " + analyzed.TOS + Environment.NewLine;
-            //textBoxBot.Text += "totalLength: " + analyzed.totalLength + Environment.NewLine;
-            //textBoxBot.Text += "id: " + analyzed.id + Environment.NewLine;
-            //textBoxBot.Text += "TTL: " + analyzed.TTL + Environment.NewLine;
-            //textBoxBot.Text += "protocal: " + analyzed.protocal + Environment.NewLine;
-            //textBoxBot.Text += "headerChecksum: " + analyzed.headerChecksum + Environment.NewLine;
-            //textBoxBot.Text += "srcAddr: " + analyzed.srcAddr + Environment.NewLine;
-            //textBoxBot.Text += "dstAddr " + analyzed.dstAddr + Environment.NewLine;
-
-
-
-        }
-
         private void Reset()
         {
             if (listViewPacket.Items != null)
                 listViewPacket.Items.Clear();
             if (parsedPacketDict != null)
                 parsedPacketDict.Clear();
-        }
-
-        public struct Analyzed
-        {
-            public string dstMac;
-            public string srcMac;
-            public string etherType;
-            public string version;
-            public string IHL;
-            public string TOS;
-            public string totalLength;
-            public string id;
-            public string flags;
-            public string fragOffset;
-            public string TTL;
-            public string protocal;
-            public string headerChecksum;
-            public string srcAddr;
-            public string dstAddr;
-            public string options;
-            public string data;
-        }
-
-        // byte[]截取
-        private string TakeBits(byte[] bits, int skip, int len)
-        {
-            return BitConverter.ToString(bits.Skip(skip).Take(len).ToArray()).Replace("-", " ");
-        }
-
-        // byte[]转十六进制数
-        public string HexFromByte(byte[] bytes)
-        {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                builder.Append(string.Format("{0:X2}", bytes[i]));
-            }
-            return builder.ToString().Trim();
         }
 
         // 清空按钮
@@ -478,23 +303,5 @@ namespace WinSniffer
             OnSelectPacketChanged();
         }
 
-        private void OnSelectPacketChanged()
-        {
-            if (listViewPacket.SelectedIndices.Count > 0)
-            {
-                // 更新右边
-                ListViewItem item = listViewPacket.SelectedItems[0];
-                int id = int.Parse(item.SubItems[0].Text);
-                curPacket = parsedPacketDict[id];
-                textBoxHex.Text = curPacket.hex;
-
-                // 更新左边
-                listBoxParse.Items.Clear();
-                StringBuilder sb = new StringBuilder();
-                sb.Append(string.Format("Frame {0}: {1} bytes captured ({2} bits) on interface {3}", id, curPacket.length, curPacket.length*8, device.Name));
-
-                listBoxParse.Items.Add(sb.ToString());
-            }
-        }
     }
 }

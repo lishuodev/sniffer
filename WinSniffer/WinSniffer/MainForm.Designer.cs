@@ -38,17 +38,17 @@
             this.columnSrc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnDst = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnProtocal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnInfo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comboBoxDeviceList = new System.Windows.Forms.ComboBox();
             this.buttonClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.listBoxParse = new System.Windows.Forms.ListBox();
             this.checkBoxPromiscuous = new System.Windows.Forms.CheckBox();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.checkBoxAutoScroll = new System.Windows.Forms.CheckBox();
-            this.columnLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -95,7 +95,9 @@
             // 
             // textBoxHex
             // 
-            this.textBoxHex.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxHex.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxHex.Location = new System.Drawing.Point(0, 0);
             this.textBoxHex.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxHex.Multiline = true;
@@ -154,6 +156,10 @@
             this.columnProtocal.Text = "Protocal";
             this.columnProtocal.Width = 80;
             // 
+            // columnLength
+            // 
+            this.columnLength.Text = "Length";
+            // 
             // columnInfo
             // 
             this.columnInfo.Text = "Info";
@@ -201,22 +207,43 @@
             this.splitContainer1.SplitterDistance = 162;
             this.splitContainer1.TabIndex = 14;
             // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.listBoxParse);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.textBoxHex);
+            this.splitContainer2.Size = new System.Drawing.Size(766, 154);
+            this.splitContainer2.SplitterDistance = 383;
+            this.splitContainer2.TabIndex = 0;
+            // 
             // listBoxParse
             // 
-            this.listBoxParse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxParse.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxParse.FormattingEnabled = true;
             this.listBoxParse.HorizontalScrollbar = true;
             this.listBoxParse.ItemHeight = 12;
             this.listBoxParse.Location = new System.Drawing.Point(0, 0);
             this.listBoxParse.Margin = new System.Windows.Forms.Padding(2);
             this.listBoxParse.Name = "listBoxParse";
-            this.listBoxParse.Size = new System.Drawing.Size(383, 154);
+            this.listBoxParse.Size = new System.Drawing.Size(383, 148);
             this.listBoxParse.TabIndex = 0;
             // 
             // checkBoxPromiscuous
             // 
             this.checkBoxPromiscuous.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxPromiscuous.AutoSize = true;
+            this.checkBoxPromiscuous.Checked = true;
+            this.checkBoxPromiscuous.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxPromiscuous.Location = new System.Drawing.Point(434, 30);
             this.checkBoxPromiscuous.Name = "checkBoxPromiscuous";
             this.checkBoxPromiscuous.Size = new System.Drawing.Size(72, 16);
@@ -242,37 +269,18 @@
             this.label1.TabIndex = 17;
             this.label1.Text = "过滤器";
             // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.listBoxParse);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.textBoxHex);
-            this.splitContainer2.Size = new System.Drawing.Size(766, 154);
-            this.splitContainer2.SplitterDistance = 383;
-            this.splitContainer2.TabIndex = 0;
-            // 
             // checkBoxAutoScroll
             // 
             this.checkBoxAutoScroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxAutoScroll.AutoSize = true;
+            this.checkBoxAutoScroll.Checked = true;
+            this.checkBoxAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAutoScroll.Location = new System.Drawing.Point(356, 30);
             this.checkBoxAutoScroll.Name = "checkBoxAutoScroll";
             this.checkBoxAutoScroll.Size = new System.Drawing.Size(72, 16);
             this.checkBoxAutoScroll.TabIndex = 18;
             this.checkBoxAutoScroll.Text = "自动滚动";
             this.checkBoxAutoScroll.UseVisualStyleBackColor = true;
-            // 
-            // columnLength
-            // 
-            this.columnLength.Text = "Length";
             // 
             // MainForm
             // 
