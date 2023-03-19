@@ -35,6 +35,7 @@ namespace WinSniffer
 
         private Dictionary<int, ParsedPacket> parsedPacketDict;
         private ParsedPacket curPacket;
+        private const int threadDelay = 100;
 
         public MainForm()
         {
@@ -55,24 +56,15 @@ namespace WinSniffer
             }
         }
 
-        //private void buttonChangeDevice_Click(object sender, EventArgs e)
-        //{
-        //    // 打开设备窗口并注册监听
-        //    deviceForm = new DeviceForm();
-        //    deviceForm.OnItemSelected += OnDeviceItemSelected;
-        //    deviceForm.OnCancel += OnCancel;
-        //    deviceForm.Show();
-        //}
-
-        //private void OnCancel()
-        //{
-        //    // 取消选择设备的回调方法
-        //    deviceForm.Hide();
-        //}
-
+        // 停止监听
         private void StopCapture()
         {
-            // 停止监听
+            buttonStop.Enabled = false;
+            buttonStart.Enabled = true;
+            buttonClear.Enabled = true;
+            comboBoxDeviceList.Enabled = true;
+            checkBoxPromiscuous.Enabled = true;
+
             if (device != null)
             {
                 device.StopCapture();
@@ -85,9 +77,22 @@ namespace WinSniffer
             }
         }
 
-        // 开始抓包
+        // 开始监听
         private void StartCapture()
         {
+            Reset();
+
+            deviceId = comboBoxDeviceList.SelectedIndex;
+            if (deviceId < 0)
+            {
+                return;
+            }
+            buttonStart.Enabled = false;
+            buttonStop.Enabled = true;
+            buttonClear.Enabled = false;
+            comboBoxDeviceList.Enabled = false;
+            checkBoxPromiscuous.Enabled = false;
+
             count = 0;
             startTime = new PosixTimeval(DateTime.Now);
             packetStrings = new Queue<PacketWrapper>();
@@ -104,7 +109,22 @@ namespace WinSniffer
             captureStoppedEventHandler = new CaptureStoppedEventHandler(OnCaptureStopped);
             device.OnCaptureStopped += captureStoppedEventHandler;
 
-            device.Open();
+            // 设置混杂模式
+            if (checkBoxPromiscuous.Checked)
+            {
+                device.Open(DeviceModes.Promiscuous);
+            }
+            else
+            {
+                device.Open();
+            }
+
+            // 设置过滤器
+            if (textBoxFilter.Text != string.Empty)
+            {
+                device.Filter = textBoxFilter.Text;
+            }
+            
             device.StartCapture();
         }
 
@@ -126,7 +146,7 @@ namespace WinSniffer
                 if (sleep)
                 {
                     // 队列为空，线程休眠一会儿
-                    System.Threading.Thread.Sleep(250);
+                    System.Threading.Thread.Sleep(threadDelay);
                 }
                 else
                 {
@@ -142,12 +162,13 @@ namespace WinSniffer
                     {
                         if (listViewPacket != null)
                         {
+                            ListViewItem item = null;
                             foreach (var packet in curQueue)
                             {
                                 count++;
                                 ParsedPacket parsed = ParsePacket(count, packet);
                                 parsedPacketDict.Add(parsed.id, parsed);
-                                var item = new ListViewItem(count.ToString());
+                                item = new ListViewItem(count.ToString());
                                 item.SubItems.Add(parsed.time.ToString());
                                 if (parsed.protocal == "TCP" || parsed.protocal == "UDP")
                                 {
@@ -163,6 +184,11 @@ namespace WinSniffer
                                 item.SubItems.Add(parsed.info);
                                 //item.SubItems.Add(parsed.hex);
                                 listViewPacket.Items.Add(item);
+                                
+                            }
+                            if (checkBoxAutoScroll.Checked)
+                            {
+                                item.EnsureVisible();
                             }
                         }
                     }
@@ -293,27 +319,12 @@ namespace WinSniffer
         // 停止按钮
         private void buttonStop_Click(object sender, EventArgs e)
         {
-            buttonStop.Enabled = false;
-            buttonStart.Enabled = true;
-            buttonClear.Enabled = true;
-            comboBoxDeviceList.Enabled = true;
-            // 停止监听
             StopCapture();
         }
 
         // 开始按钮
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            deviceId = comboBoxDeviceList.SelectedIndex;
-            if (deviceId < 0)
-            {
-                return;
-            }
-            buttonStart.Enabled = false;
-            buttonStop.Enabled = true;
-            buttonClear.Enabled = false;
-            comboBoxDeviceList.Enabled = false;
-            // 开始监听
             StartCapture();
         }
 
@@ -400,6 +411,14 @@ namespace WinSniffer
 
         }
 
+        private void Reset()
+        {
+            if (listViewPacket.Items != null)
+                listViewPacket.Items.Clear();
+            if (parsedPacketDict != null)
+                parsedPacketDict.Clear();
+        }
+
         public struct Analyzed
         {
             public string dstMac;
@@ -441,8 +460,7 @@ namespace WinSniffer
         // 清空按钮
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            listViewPacket.Items.Clear();
-            parsedPacketDict.Clear();
+            Reset();
         }
 
         private void listViewPacket_SelectedIndexChanged(object sender, EventArgs e)
