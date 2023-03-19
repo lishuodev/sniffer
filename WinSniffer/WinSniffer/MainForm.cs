@@ -457,7 +457,7 @@ namespace WinSniffer
                 ListViewItem item = listViewPacket.SelectedItems[0];
                 int id = int.Parse(item.SubItems[0].Text);
                 curPacket = parsedPacketDict[id];
-                textBoxBinary.Text = curPacket.hex;
+                textBoxHex.Text = curPacket.hex;
             }
         }
     }

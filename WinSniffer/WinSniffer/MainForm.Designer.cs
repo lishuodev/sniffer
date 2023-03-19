@@ -31,7 +31,7 @@
             this.labelCurrentDevice = new System.Windows.Forms.Label();
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonStart = new System.Windows.Forms.Button();
-            this.textBoxBinary = new System.Windows.Forms.TextBox();
+            this.textBoxHex = new System.Windows.Forms.TextBox();
             this.listViewPacket = new System.Windows.Forms.ListView();
             this.columnNo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -42,26 +42,32 @@
             this.comboBoxDeviceList = new System.Windows.Forms.ComboBox();
             this.buttonClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.listBoxParse = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelCurrentDevice
             // 
             this.labelCurrentDevice.AutoSize = true;
-            this.labelCurrentDevice.Location = new System.Drawing.Point(2, 4);
+            this.labelCurrentDevice.Location = new System.Drawing.Point(2, 7);
             this.labelCurrentDevice.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelCurrentDevice.Name = "labelCurrentDevice";
-            this.labelCurrentDevice.Size = new System.Drawing.Size(35, 12);
+            this.labelCurrentDevice.Size = new System.Drawing.Size(53, 12);
             this.labelCurrentDevice.TabIndex = 5;
-            this.labelCurrentDevice.Text = "设备:";
+            this.labelCurrentDevice.Text = "当前设备";
             // 
             // buttonStop
             // 
             this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonStop.Location = new System.Drawing.Point(593, 41);
+            this.buttonStop.Location = new System.Drawing.Point(598, 26);
             this.buttonStop.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(83, 23);
@@ -73,7 +79,7 @@
             // buttonStart
             // 
             this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonStart.Location = new System.Drawing.Point(506, 41);
+            this.buttonStart.Location = new System.Drawing.Point(511, 26);
             this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(83, 23);
@@ -82,18 +88,19 @@
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
-            // textBoxBinary
+            // textBoxHex
             // 
-            this.textBoxBinary.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.textBoxHex.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxBinary.Location = new System.Drawing.Point(0, 2);
-            this.textBoxBinary.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxBinary.Multiline = true;
-            this.textBoxBinary.Name = "textBoxBinary";
-            this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxBinary.Size = new System.Drawing.Size(764, 206);
-            this.textBoxBinary.TabIndex = 9;
+            this.textBoxHex.Location = new System.Drawing.Point(0, 2);
+            this.textBoxHex.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxHex.Multiline = true;
+            this.textBoxHex.Name = "textBoxHex";
+            this.textBoxHex.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxHex.Size = new System.Drawing.Size(764, 156);
+            this.textBoxHex.TabIndex = 9;
+            this.textBoxHex.WordWrap = false;
             // 
             // listViewPacket
             // 
@@ -111,10 +118,10 @@
             this.columnInfo});
             this.listViewPacket.HideSelection = false;
             this.listViewPacket.Location = new System.Drawing.Point(0, 0);
-            this.listViewPacket.Margin = new System.Windows.Forms.Padding(5);
+            this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(764, 193);
+            this.listViewPacket.Size = new System.Drawing.Size(764, 170);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
@@ -155,15 +162,15 @@
             this.comboBoxDeviceList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDeviceList.FormattingEnabled = true;
-            this.comboBoxDeviceList.Location = new System.Drawing.Point(4, 19);
+            this.comboBoxDeviceList.Location = new System.Drawing.Point(60, 4);
             this.comboBoxDeviceList.Name = "comboBoxDeviceList";
-            this.comboBoxDeviceList.Size = new System.Drawing.Size(759, 20);
+            this.comboBoxDeviceList.Size = new System.Drawing.Size(708, 20);
             this.comboBoxDeviceList.TabIndex = 12;
             // 
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClear.Location = new System.Drawing.Point(680, 41);
+            this.buttonClear.Location = new System.Drawing.Point(685, 26);
             this.buttonClear.Margin = new System.Windows.Forms.Padding(2);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(83, 23);
@@ -177,7 +184,7 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(4, 69);
+            this.splitContainer1.Location = new System.Drawing.Point(4, 54);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -187,16 +194,50 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.textBoxBinary);
-            this.splitContainer1.Size = new System.Drawing.Size(766, 408);
-            this.splitContainer1.SplitterDistance = 194;
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(766, 516);
+            this.splitContainer1.SplitterDistance = 172;
             this.splitContainer1.TabIndex = 14;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(0, 3);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.listBoxParse);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.textBoxHex);
+            this.splitContainer2.Size = new System.Drawing.Size(766, 350);
+            this.splitContainer2.SplitterDistance = 175;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // listBoxParse
+            // 
+            this.listBoxParse.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxParse.FormattingEnabled = true;
+            this.listBoxParse.HorizontalScrollbar = true;
+            this.listBoxParse.ItemHeight = 12;
+            this.listBoxParse.Location = new System.Drawing.Point(0, 0);
+            this.listBoxParse.Margin = new System.Windows.Forms.Padding(2);
+            this.listBoxParse.Name = "listBoxParse";
+            this.listBoxParse.Size = new System.Drawing.Size(764, 172);
+            this.listBoxParse.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(770, 479);
+            this.ClientSize = new System.Drawing.Size(770, 594);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.comboBoxDeviceList);
@@ -209,9 +250,13 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,7 +266,7 @@
         private System.Windows.Forms.Label labelCurrentDevice;
         private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.Button buttonStart;
-        private System.Windows.Forms.TextBox textBoxBinary;
+        private System.Windows.Forms.TextBox textBoxHex;
         private System.Windows.Forms.ListView listViewPacket;
         private System.Windows.Forms.ColumnHeader columnNo;
         private System.Windows.Forms.ColumnHeader columnTime;
@@ -232,6 +277,8 @@
         private System.Windows.Forms.ComboBox comboBoxDeviceList;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.ListBox listBoxParse;
     }
 }
 
