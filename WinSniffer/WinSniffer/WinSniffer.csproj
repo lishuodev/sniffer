@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EthernetAnalyzer.cs" />
+    <Compile Include="IPv4Analyzer.cs" />
+    <Compile Include="IPv6Analyzer.cs" />
     <Compile Include="NetParser.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

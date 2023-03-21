@@ -6,8 +6,10 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PacketDotNet;
@@ -19,24 +21,27 @@ namespace WinSniffer
     public partial class MainForm : Form
     {
         private ICaptureDevice device;
-        private System.Threading.Thread backgroundThread; // 监听线程
+        private Thread listviewThread; // 列表管理线程
+        private Thread analyzerThread; // 分析线程
         private PacketArrivalEventHandler arrivalEventHandler; // 包到达事件处理句柄
         private CaptureStoppedEventHandler captureStoppedEventHandler; // 停止事件处理句柄
         private object queueLock = new object(); // 队列锁
+        private object parsedLock = new object(); // lock for parsedPacketDict
         private List<RawCapture> packetQueue = new List<RawCapture>(); // 包队列
         private bool backgroundThreadStop = false;
         private int deviceId;
-        private Queue<PacketWrapper> packetStrings;
         
-        private int count;
+        private int id;
         private PosixTimeval startTime;
-        private PacketWrapper rawPacket;
 
-        private Dictionary<int, ParsedPacket> parsedPacketDict;
-        private Dictionary<int, ParsedEthernetPacket> parsedPacketDict2;
-        private ParsedPacket curPacket;
-        private ParsedEthernetPacket curPacket2;
-        private const int threadDelay = 100;
+        private Dictionary<int, LibraryParsedPacket> parsedPacketDict;
+        private List<LibraryParsedPacket> parsedPacketList;
+        private LibraryParsedPacket curPacket;
+        private const int threadDelay = 250;
+
+        private Dictionary<int, EthernetInfo> ethernetInfoDict;
+        private Dictionary<int, IPv4Info> ipv4InfoDict;
+        private Dictionary<int, IPv6Info> ipv6InfoDict;
 
         public MainForm()
         {
@@ -50,10 +55,84 @@ namespace WinSniffer
             buttonClear.Enabled = true;
             listViewPacket.FullRowSelect = true;
 
+            // 更新设备下拉列表
             foreach (var dev in CaptureDeviceList.Instance)
             {
                 var str = String.Format("{0} {1}", dev.Name, dev.Description);
                 comboBoxDeviceList.Items.Add(str);
+            }
+
+        }
+
+        // 更新列表显示
+        private void UpdateListView()
+        {
+            List<LibraryParsedPacket> curList;
+            lock (parsedLock)
+            {
+                curList = parsedPacketList;
+                parsedPacketList = new List<LibraryParsedPacket>();
+            }
+
+            ListViewItem item = null;
+            LibraryParsedPacket parsed = null;
+            for (int i = 0; i < curList.Count; i++)
+            {
+                parsed = curList[i];
+                item = new ListViewItem(parsed.id.ToString());
+                item.SubItems.Add(parsed.time.ToString());
+                switch (parsed.ethernetType)
+                {
+                    case EthernetType.IPv4:
+                        item.SubItems.Add(parsed.sourceIP.ToString());
+                        item.SubItems.Add(parsed.destinationIP.ToString());
+                        break;
+                    case EthernetType.IPv6:
+                        item.SubItems.Add(parsed.sourceAddress.ToString());
+                        item.SubItems.Add(parsed.destinationAddress.ToString());
+                        break;
+                    case EthernetType.Arp:
+                        item.SubItems.Add("");
+                        item.SubItems.Add("");
+                        break;
+                    default:
+                        item.SubItems.Add("");
+                        item.SubItems.Add("");
+                        break;
+                }
+                item.SubItems.Add(parsed.protocol.ToString());
+                item.SubItems.Add(parsed.packageLength.ToString());
+                listViewPacket.Items.Add(item);
+            }
+
+            if (item != null && checkBoxAutoScroll.Checked)
+            {
+                item.EnsureVisible();
+            }
+        }
+
+        // 更新列表的线程
+        private void ListViewThread()
+        {
+            while (!backgroundThreadStop)
+            {
+                bool sleep = true;
+                lock (parsedLock)
+                {
+                    if (parsedPacketList.Count != 0)
+                    {
+                        sleep = false;
+                    }
+                }
+
+                if (sleep)
+                {
+                    Thread.Sleep(threadDelay);
+                }
+                else
+                {
+                    BeginInvoke(new MethodInvoker(UpdateListView));
+                }
             }
         }
 
@@ -74,7 +153,8 @@ namespace WinSniffer
                 device.OnCaptureStopped -= captureStoppedEventHandler;
                 //device = null;
                 backgroundThreadStop = true;
-                backgroundThread.Join();
+                analyzerThread.Join();
+                listviewThread.Join();
             }
         }
 
@@ -94,15 +174,21 @@ namespace WinSniffer
             comboBoxDeviceList.Enabled = false;
             checkBoxPromiscuous.Enabled = false;
 
-            count = 0;
+            id = 0;
             startTime = new PosixTimeval(DateTime.Now);
-            packetStrings = new Queue<PacketWrapper>();
-            parsedPacketDict = new Dictionary<int, ParsedPacket>();
-            parsedPacketDict2 = new Dictionary<int, ParsedEthernetPacket>();
+            parsedPacketDict = new Dictionary<int, LibraryParsedPacket>();
+            parsedPacketList = new List<LibraryParsedPacket>();
+
+            ethernetInfoDict = new Dictionary<int, EthernetInfo>();
+            ipv4InfoDict = new Dictionary<int, IPv4Info>();
+            ipv6InfoDict = new Dictionary<int, IPv6Info>();
 
             backgroundThreadStop = false;
-            backgroundThread = new System.Threading.Thread(BackgroundThread);
-            backgroundThread.Start();
+            analyzerThread = new Thread(new ThreadStart(AnalyzerThread));
+            analyzerThread.Start();
+
+            listviewThread = new Thread(new ThreadStart(ListViewThread));
+            listviewThread.Start();
 
             device = CaptureDeviceList.Instance[deviceId];
 
@@ -130,8 +216,8 @@ namespace WinSniffer
             device.StartCapture();
         }
 
-        // 后台进程，用于解析队列中的包并添加到listview
-        private void BackgroundThread()
+        // 解析包的线程
+        private void AnalyzerThread()
         {
             while (!backgroundThreadStop)
             {
@@ -148,7 +234,7 @@ namespace WinSniffer
                 if (sleep)
                 {
                     // 队列为空，线程休眠一会儿
-                    System.Threading.Thread.Sleep(threadDelay);
+                    Thread.Sleep(threadDelay);
                 }
                 else
                 {
@@ -160,47 +246,50 @@ namespace WinSniffer
                         packetQueue = new List<RawCapture>();
                     }
 
-                    this.BeginInvoke(new MethodInvoker(delegate
+                   
+                    foreach (var packet in curQueue)
                     {
-                        if (listViewPacket != null)
+                        id++;
+                        // 用 PacketDotNet 库解析数据包
+                        LibraryParsedPacket libPacket = NetParser.LibraryParsePacket(id, packet);
+                        libPacket.time = libPacket.timeval.Value - startTime.Value;
+                        parsedPacketDict.Add(id, libPacket);
+                        
+                        lock (parsedLock)
                         {
-                            ListViewItem item = null;
-                            foreach (var packet in curQueue)
-                            {
-                                count++;
-                                ParsedPacket parsed = NetParser.ParsePacket(count, packet);
-                                parsedPacketDict.Add(parsed.id, parsed);
-                                item = new ListViewItem(count.ToString());
-                                item.SubItems.Add(parsed.time.ToString());
-                                if (parsed.protocal == "TCP" || parsed.protocal == "UDP")
-                                {
-                                    item.SubItems.Add(parsed.IPsrc.ToString());
-                                    item.SubItems.Add(parsed.IPdst.ToString());
-                                }
-                                else
-                                {
-                                    item.SubItems.Add("");
-                                    item.SubItems.Add("");
-                                }
-                                item.SubItems.Add(parsed.protocal);
-                                item.SubItems.Add(parsed.length.ToString());
-                                item.SubItems.Add(parsed.info);
-                                //item.SubItems.Add(parsed.hex);
-                                listViewPacket.Items.Add(item);
+                            parsedPacketList.Add(libPacket);
+                        }
+                        
+                        // 手动解析 Ethernet Packet
+                        EthernetInfo ethernetInfo = EthernetAnalyzer.Analyze(packet.Data);
+                        ethernetInfoDict.Add(id, ethernetInfo);
 
-                                //自定义解析
-                                ParsedEthernetPacket parsed2 = NetParser.ParseEthernetFrame(count, packet);
-                                parsedPacketDict2.Add(parsed2.frame, parsed2);
-                                // TBD
-
-                            }
-                            if (checkBoxAutoScroll.Checked)
+                        // 根据 etherType 值范围判断是否 Ethernet Packet
+                        if (ethernetInfo.etherType >= 0x0600 && ethernetInfo.etherType <= 0xFFFF)
+                        {
+                            switch (ethernetInfo.etherType)
                             {
-                                item.EnsureVisible();
+                                case 0x0800:    // IPv4
+                                    // 手动解析 IPv4 Packet
+                                    byte[] ipv4Data = packet.Data.Skip(14).ToArray();
+                                    IPv4Info ipv4Info = IPv4Analyzer.Analyze(ipv4Data);
+                                    ipv4InfoDict.Add(id, ipv4Info);
+                                    break;
+                                case 0x86DD:    // IPv6
+                                    // 手动解析 IPv6 Packet
+                                    byte[] ipv6Data = packet.Data.Skip(14).ToArray();
+                                    IPv6Info ipv6Info = IPv6Analyzer.Analyze(ipv6Data);
+                                    ipv6InfoDict.Add(id, ipv6Info);
+                                    break;
+                                case 0x0806:    // ARP
+                                    break;
+                                case 0x0808:    // IEEE 802.2
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                     }
-                    ));
                 }
             }
         }
@@ -213,48 +302,109 @@ namespace WinSniffer
                 ListViewItem item = listViewPacket.SelectedItems[0];
                 int id = int.Parse(item.SubItems[0].Text);
                 curPacket = parsedPacketDict[id];
-                //textBoxHex.Text = curPacket.hex;
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("protocol:" + curPacket.protocal);
-                sb.AppendLine("TTL:" + curPacket.IPtimeToLive);
-                textBoxHex.Text = sb.ToString();
 
-                // 更新左边
                 listBoxParse.Items.Clear();
-                //StringBuilder sb = new StringBuilder();
-                //sb.Append(string.Format("Frame {0}: {1} bytes captured ({2} bits) on interface {3}", id, curPacket.length, curPacket.length*8, device.Name));
+                
 
-                //listBoxParse.Items.Add(sb.ToString());
+                listBoxParse.Items.Add("--------------------------------------------------");
+                listBoxParse.Items.Add("PacketDotNet");
+                listBoxParse.Items.Add("--------------------------------------------------");
 
-                curPacket2 = parsedPacketDict2[id];
-                if (curPacket2.hex != null)
+                listBoxParse.Items.Add("Ethernet");
+                listBoxParse.Items.Add("--------------------------------------------------");
+                listBoxParse.Items.Add("Source Mac:" + curPacket.sourceMac.ToString());
+                listBoxParse.Items.Add("Destination Mac:" + curPacket.destinationMac.ToString());
+                listBoxParse.Items.Add("ethernetType:" + curPacket.ethernetType.ToString());
+
+                switch (curPacket.ethernetType)
                 {
-                    listBoxParse.Items.Add(curPacket2.hex);
+                    case EthernetType.IPv4:
+                        listBoxParse.Items.Add("--------------------------------------------------");
+                        listBoxParse.Items.Add("IPv4");
+                        listBoxParse.Items.Add("--------------------------------------------------");
+                        listBoxParse.Items.Add("version:" + curPacket.version);
+                        listBoxParse.Items.Add("headerLength:" + curPacket.headerLength);
+                        listBoxParse.Items.Add("ToS:" + curPacket.ToS);
+                        listBoxParse.Items.Add("totalLength:" + curPacket.totalLength);
+                        listBoxParse.Items.Add("identification:" + curPacket.identification);
+                        listBoxParse.Items.Add("flags:" + curPacket.flags);
+                        listBoxParse.Items.Add("fragmentOffset:" + curPacket.fragmentOffset);
+                        listBoxParse.Items.Add("TTL:" + curPacket.TTL);
+                        listBoxParse.Items.Add("protocol:" + curPacket.protocol);
+                        listBoxParse.Items.Add("headerChecksum:" + curPacket.headerChecksum);
+                        listBoxParse.Items.Add("Source IP:" + curPacket.sourceIP.ToString());
+                        listBoxParse.Items.Add("Destination IP:" + curPacket.destinationIP.ToString());
+                        break;
+                    case EthernetType.IPv6:
+                        listBoxParse.Items.Add("--------------------------------------------------");
+                        listBoxParse.Items.Add("IPv6");
+                        listBoxParse.Items.Add("--------------------------------------------------");
+                        listBoxParse.Items.Add("version:" + curPacket.version6);
+                        listBoxParse.Items.Add("trafficClass:" + curPacket.trafficClass);
+                        listBoxParse.Items.Add("flowLabel:" + curPacket.flowLabel);
+                        listBoxParse.Items.Add("payloadLength:" + curPacket.payloadLength);
+                        listBoxParse.Items.Add("nextHeader:" + curPacket.nextHeader);
+                        listBoxParse.Items.Add("nextHeaderEnum:" + curPacket.nextHeaderEnum);
+                        listBoxParse.Items.Add("hopLimit:" + curPacket.hopLimit);
+                        listBoxParse.Items.Add("sourceAddress:" + curPacket.sourceAddress);
+                        listBoxParse.Items.Add("destinationAddress:" + curPacket.destinationAddress);
+                        break;
                 }
 
-                listBoxParse.Items.Add("Destination Mac:" + curPacket2.dstMac.ToString());
-                listBoxParse.Items.Add("Source Mac:" + curPacket2.srcMac.ToString());
-                listBoxParse.Items.Add("EtherType(HEX):" + curPacket2.etherTypeHex);
-                listBoxParse.Items.Add("EtherType:" + curPacket2.etherTypeString);
-                listBoxParse.Items.Add("FrameType:" + curPacket2.frameType);
-                listBoxParse.Items.Add("IP(HEX):" + curPacket2.ipHex);
+                listBoxParse2.Items.Clear();
+                listBoxParse2.Items.Add("--------------------------------------------------");
+                listBoxParse2.Items.Add("Binary Analysis");
+                EthernetInfo ethernetInfo = ethernetInfoDict[id];
+                listBoxParse2.Items.Add("--------------------------------------------------");
+                listBoxParse2.Items.Add("Ethernet");
+                listBoxParse2.Items.Add("--------------------------------------------------");
+                listBoxParse2.Items.Add("Source Mac:" + ethernetInfo.sourceMac);
+                listBoxParse2.Items.Add("Destination Mac:" + ethernetInfo.destinationMac);
+                listBoxParse2.Items.Add("EtherType:" +  ethernetInfo.etherType + " " + (EthernetType)ethernetInfo.etherType);
 
-                ParsedIpPacket ipPacket = curPacket2.ipPacket;
-                if (ipPacket != null)
+                if (ethernetInfo.etherType >= 0x0600 && ethernetInfo.etherType <= 0xFFFF)
                 {
-                    listBoxParse.Items.Add("IPVersion:" + ipPacket.version.ToString());
-                    listBoxParse.Items.Add("IHL:" + ipPacket.IHL);
-                    listBoxParse.Items.Add("ToS:" + ipPacket.ToS);
-                    listBoxParse.Items.Add("TotalLength:" + ipPacket.totalLength);
-                    listBoxParse.Items.Add("Identification:" + ipPacket.identification);
-                    listBoxParse.Items.Add("Flags:" + ipPacket.flags);
-                    listBoxParse.Items.Add("FragmentOffset:" + ipPacket.fragmentOffset);
-                    listBoxParse.Items.Add("TTL:" + ipPacket.TTL);
-                    listBoxParse.Items.Add("Protocal:" + ipPacket.protocol.ToString());
-                    listBoxParse.Items.Add("HeaderChecksum:" + ipPacket.headerChecksum);
-                    listBoxParse.Items.Add("Source IP:" + ipPacket.srcIp.ToString());
-                    listBoxParse.Items.Add("Destination IP:" + ipPacket.dstIp.ToString());
-
+                    switch (ethernetInfo.etherType)
+                    {
+                        case 0x0800:    // IPv4
+                            IPv4Info ipv4Info = ipv4InfoDict[id];
+                            listBoxParse2.Items.Add("--------------------------------------------------");
+                            listBoxParse2.Items.Add("IPv4");
+                            listBoxParse2.Items.Add("--------------------------------------------------");
+                            listBoxParse2.Items.Add("version:" + ipv4Info.version);
+                            listBoxParse2.Items.Add("headerLength:" + ipv4Info.headerLength);
+                            listBoxParse2.Items.Add("ToS:" + ipv4Info.ToS);
+                            listBoxParse2.Items.Add("totalLength:" + ipv4Info.totalLength);
+                            listBoxParse2.Items.Add("identification:" + ipv4Info.identification);
+                            listBoxParse2.Items.Add("flags:" + ipv4Info.flags);
+                            listBoxParse2.Items.Add("fragmentOffset:" + ipv4Info.fragmentOffset);
+                            listBoxParse2.Items.Add("TTL:" + ipv4Info.TTL);
+                            listBoxParse2.Items.Add("protocol:" + ipv4Info.protocol);
+                            listBoxParse2.Items.Add("headerChecksum:" + ipv4Info.headerChecksum);
+                            listBoxParse2.Items.Add("Source IP:" + ipv4Info.sourceIP.ToString());
+                            listBoxParse2.Items.Add("Destination IP:" + ipv4Info.destinationIP.ToString());
+                            break;
+                        case 0x86DD:    // IPv6
+                            IPv6Info ipv6Info = ipv6InfoDict[id];
+                            listBoxParse2.Items.Add("--------------------------------------------------");
+                            listBoxParse2.Items.Add("IPv6");
+                            listBoxParse2.Items.Add("--------------------------------------------------");
+                            listBoxParse2.Items.Add("version:" + ipv6Info.version);
+                            listBoxParse2.Items.Add("trafficClass:" + ipv6Info.trafficClass);
+                            listBoxParse2.Items.Add("flowLabel:" + ipv6Info.flowLabel);
+                            listBoxParse2.Items.Add("payloadLength:" + ipv6Info.payloadLength);
+                            listBoxParse2.Items.Add("nextHeader:" + ipv6Info.nextHeader);
+                            listBoxParse2.Items.Add("hopLimit:" + ipv6Info.hopLimit);
+                            listBoxParse2.Items.Add("Source Address:" + ipv6Info.sourceAddress.ToString());
+                            listBoxParse2.Items.Add("Destination Address:" + ipv6Info.destinationAddress.ToString());
+                            break;
+                        case 0x0806:    // ARP
+                            break;
+                        case 0x0808:    // IEEE 802.2
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -290,6 +440,8 @@ namespace WinSniffer
                 listViewPacket.Items.Clear();
             if (parsedPacketDict != null)
                 parsedPacketDict.Clear();
+            if (parsedPacketList != null)
+                parsedPacketList.Clear();
         }
 
         // 清空按钮
