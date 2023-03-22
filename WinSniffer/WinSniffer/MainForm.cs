@@ -64,7 +64,6 @@ namespace WinSniffer
                 var str = String.Format("{0} {1}", dev.Name, dev.Description);
                 comboBoxDeviceList.Items.Add(str);
             }
-
         }
 
         // 更新列表显示
@@ -371,10 +370,28 @@ namespace WinSniffer
                         listBoxParse.Items.Add("trafficClass:" + ipv6.trafficClass);
                         listBoxParse.Items.Add("flowLabel:" + ipv6.flowLabel);
                         listBoxParse.Items.Add("payloadLength:" + ipv6.payloadLength);
-                        listBoxParse.Items.Add("nextHeader:" + ipv6.nextHeader);
+                        listBoxParse.Items.Add("nextHeader:" + (ProtocolType)ipv6.nextHeader);
                         listBoxParse.Items.Add("hopLimit:" + ipv6.hopLimit);
                         listBoxParse.Items.Add("sourceAddress:" + ipv6.sourceAddress.ToString());
                         listBoxParse.Items.Add("destinationAddress:" + ipv6.destinationAddress.ToString());
+                        if (ipv6.payload != null)
+                        {
+                            listBoxParse.Items.Add("payload:" + BitConverter.ToString(ipv6.payload).Replace("-", " "));
+                        }
+                        switch ((ProtocolType)ipv6.nextHeader)
+                        {
+                            case ProtocolType.Tcp:
+                                listBoxParse.Items.Add("TCP");
+                                break;
+                            case ProtocolType.Udp:
+                                listBoxParse.Items.Add("UDP");
+                                break;
+                            case ProtocolType.IcmpV6:
+                                listBoxParse.Items.Add("ICMPv6");
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     case EthernetType.Arp:
                         ARPInfo arp = curPacket.arp;
@@ -507,10 +524,49 @@ namespace WinSniffer
                             listBoxParse2.Items.Add("trafficClass:" + ipv6Info.trafficClass);
                             listBoxParse2.Items.Add("flowLabel:" + ipv6Info.flowLabel);
                             listBoxParse2.Items.Add("payloadLength:" + ipv6Info.payloadLength);
-                            listBoxParse2.Items.Add("nextHeader:" + ipv6Info.nextHeader);
+                            listBoxParse2.Items.Add("nextHeader:" + (ProtocolType)ipv6Info.nextHeader);
                             listBoxParse2.Items.Add("hopLimit:" + ipv6Info.hopLimit);
                             listBoxParse2.Items.Add("Source Address:" + ipv6Info.sourceAddress.ToString());
                             listBoxParse2.Items.Add("Destination Address:" + ipv6Info.destinationAddress.ToString());
+                            if (ipv6Info.payload != null)
+                            {
+                                listBoxParse2.Items.Add("payload:" + BitConverter.ToString(ipv6Info.payload).Replace("-", " "));
+                            }
+                            switch ((ProtocolType)ipv6Info.nextHeader)
+                            {
+                                case ProtocolType.Tcp:
+                                    TCPInfo tcpInfo = TCPAnalyzer.Analyze(ipv6Info.payload);
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("TCP");
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("sourcePort:" + tcpInfo.sourcePort);
+                                    listBoxParse2.Items.Add("destinationPort:" + tcpInfo.destinationPort);
+                                    listBoxParse2.Items.Add("sequenceNumber:" + tcpInfo.sequenceNumber);
+                                    listBoxParse2.Items.Add("acknowledgementNumber:" + tcpInfo.acknowledgementNumber);
+                                    listBoxParse2.Items.Add("dataOffset:" + tcpInfo.dataOffset);
+                                    listBoxParse2.Items.Add("flags:" + tcpInfo.flags);
+                                    listBoxParse2.Items.Add("windowSize:" + tcpInfo.windowSize);
+                                    listBoxParse2.Items.Add("checksum:" + tcpInfo.checksum);
+                                    listBoxParse2.Items.Add("urgentPointer:" + tcpInfo.urgentPointer);
+                                    listBoxParse2.Items.Add("options:" + BitConverter.ToString(tcpInfo.options).Replace("-", ":"));
+                                    listBoxParse2.Items.Add("payload:" + BitConverter.ToString(tcpInfo.payload).Replace("-", ":"));
+                                    break;
+                                case ProtocolType.Udp:
+                                    UDPInfo udpInfo = UDPAnalyzer.Analyze(ipv6Info.payload);
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("UDP");
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("sourcePort:" + udpInfo.sourcePort);
+                                    listBoxParse2.Items.Add("destinationPort:" + udpInfo.destinationPort);
+                                    listBoxParse2.Items.Add("length:" + udpInfo.length);
+                                    listBoxParse2.Items.Add("checksum:" + udpInfo.checksum);
+                                    listBoxParse2.Items.Add("payload:" + BitConverter.ToString(udpInfo.payload).Replace("-", ":"));
+                                    break;
+                                case ProtocolType.IcmpV6:
+                                    break;
+                                default:
+                                    break;
+                            }
                             break;
                         case 0x0806:    // ARP
                             ARPInfo arpInfo = arpInfoDict[id];

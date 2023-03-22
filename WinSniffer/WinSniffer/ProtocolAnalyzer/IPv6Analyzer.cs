@@ -18,6 +18,7 @@ namespace WinSniffer.ProtocolAnalyzer
         public int hopLimit;
         public IPAddress sourceAddress;
         public IPAddress destinationAddress;
+        public byte[] payload;
     }
 
     public static class IPv6Analyzer
@@ -35,6 +36,8 @@ namespace WinSniffer.ProtocolAnalyzer
                 info.hopLimit = packet[7];
                 info.sourceAddress = new IPAddress(packet.Skip(8).Take(16).ToArray());
                 info.destinationAddress = new IPAddress(packet.Skip(24).Take(16).ToArray());
+                info.payload = new byte[info.payloadLength];
+                Array.Copy(packet, 40, info.payload, 0, info.payloadLength);
                 return info;
             }
             else

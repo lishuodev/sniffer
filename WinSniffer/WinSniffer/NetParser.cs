@@ -16,7 +16,7 @@ namespace WinSniffer
 {
     public static class NetParser
     {
-        // 借助库解析数据包
+        // 借助PacketDotNet库解析数据包
         public static LibraryParsedPacket LibraryParsePacket(int id, RawCapture raw)
         {
             LibraryParsedPacket parsed = new LibraryParsedPacket();
@@ -62,6 +62,25 @@ namespace WinSniffer
                         ipv6Info.hopLimit = ipv6.HopLimit;
                         ipv6Info.sourceAddress = ipv6.SourceAddress;
                         ipv6Info.destinationAddress = ipv6.DestinationAddress;
+                        if (ipv6.PayloadData != null)
+                        {
+                            ipv6Info.payload = new byte[ipv6.PayloadData.Length];
+                            Array.Copy(ipv6.PayloadData, ipv6Info.payload, ipv6.PayloadData.Length);
+                        }
+                        switch ((ProtocolType)ipv6Info.nextHeader)
+                        {
+                            case ProtocolType.Tcp:
+
+                                break;
+                            case ProtocolType.Udp:
+
+                                break;
+                            case ProtocolType.IcmpV6:
+
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     case EthernetType.Arp:
                         ARPInfo arpInfo = new ARPInfo();
