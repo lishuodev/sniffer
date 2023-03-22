@@ -38,22 +38,28 @@
             this.columnDst = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnProtocal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnInfo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comboBoxDeviceList = new System.Windows.Forms.ComboBox();
             this.buttonClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.textBoxBinary = new System.Windows.Forms.TextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.listBoxParse = new System.Windows.Forms.ListBox();
+            this.listBoxParse2 = new System.Windows.Forms.ListBox();
             this.checkBoxPromiscuous = new System.Windows.Forms.CheckBox();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBoxAutoScroll = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.listBoxParse2 = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -74,8 +80,8 @@
             // buttonStop
             // 
             this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonStop.Location = new System.Drawing.Point(565, 22);
-            this.buttonStop.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonStop.Location = new System.Drawing.Point(546, 22);
+            this.buttonStop.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(83, 23);
             this.buttonStop.TabIndex = 6;
@@ -86,8 +92,8 @@
             // buttonStart
             // 
             this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonStart.Location = new System.Drawing.Point(478, 22);
-            this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonStart.Location = new System.Drawing.Point(459, 22);
+            this.buttonStart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(83, 23);
             this.buttonStart.TabIndex = 7;
@@ -106,14 +112,14 @@
             this.columnDst,
             this.columnProtocal,
             this.columnLength,
-            this.columnInfo});
+            this.columnType});
             this.listViewPacket.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewPacket.HideSelection = false;
             this.listViewPacket.Location = new System.Drawing.Point(0, 0);
-            this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
+            this.listViewPacket.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(735, 195);
+            this.listViewPacket.Size = new System.Drawing.Size(358, 195);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
@@ -142,16 +148,17 @@
             // columnProtocal
             // 
             this.columnProtocal.Text = "Protocal";
-            this.columnProtocal.Width = 80;
+            this.columnProtocal.Width = 150;
             // 
             // columnLength
             // 
             this.columnLength.Text = "Length";
+            this.columnLength.Width = 100;
             // 
-            // columnInfo
+            // columnType
             // 
-            this.columnInfo.Text = "Info";
-            this.columnInfo.Width = 200;
+            this.columnType.Text = "Type";
+            this.columnType.Width = 50;
             // 
             // comboBoxDeviceList
             // 
@@ -160,14 +167,14 @@
             this.comboBoxDeviceList.FormattingEnabled = true;
             this.comboBoxDeviceList.Location = new System.Drawing.Point(56, 0);
             this.comboBoxDeviceList.Name = "comboBoxDeviceList";
-            this.comboBoxDeviceList.Size = new System.Drawing.Size(685, 20);
+            this.comboBoxDeviceList.Size = new System.Drawing.Size(666, 20);
             this.comboBoxDeviceList.TabIndex = 12;
             // 
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClear.Location = new System.Drawing.Point(652, 22);
-            this.buttonClear.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonClear.Location = new System.Drawing.Point(633, 22);
+            this.buttonClear.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(83, 23);
             this.buttonClear.TabIndex = 13;
@@ -186,14 +193,43 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.listViewPacket);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer3);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(735, 386);
+            this.splitContainer1.Size = new System.Drawing.Size(716, 386);
             this.splitContainer1.SplitterDistance = 195;
             this.splitContainer1.TabIndex = 14;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.listViewPacket);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.textBoxBinary);
+            this.splitContainer3.Size = new System.Drawing.Size(716, 195);
+            this.splitContainer3.SplitterDistance = 358;
+            this.splitContainer3.SplitterWidth = 2;
+            this.splitContainer3.TabIndex = 12;
+            // 
+            // textBoxBinary
+            // 
+            this.textBoxBinary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxBinary.Location = new System.Drawing.Point(0, 0);
+            this.textBoxBinary.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxBinary.Multiline = true;
+            this.textBoxBinary.Name = "textBoxBinary";
+            this.textBoxBinary.Size = new System.Drawing.Size(356, 195);
+            this.textBoxBinary.TabIndex = 0;
             // 
             // splitContainer2
             // 
@@ -208,8 +244,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.listBoxParse2);
-            this.splitContainer2.Size = new System.Drawing.Size(735, 187);
-            this.splitContainer2.SplitterDistance = 367;
+            this.splitContainer2.Size = new System.Drawing.Size(716, 187);
+            this.splitContainer2.SplitterDistance = 357;
             this.splitContainer2.TabIndex = 0;
             // 
             // listBoxParse
@@ -219,10 +255,20 @@
             this.listBoxParse.HorizontalScrollbar = true;
             this.listBoxParse.ItemHeight = 12;
             this.listBoxParse.Location = new System.Drawing.Point(0, 0);
-            this.listBoxParse.Margin = new System.Windows.Forms.Padding(2);
+            this.listBoxParse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listBoxParse.Name = "listBoxParse";
-            this.listBoxParse.Size = new System.Drawing.Size(367, 187);
+            this.listBoxParse.Size = new System.Drawing.Size(357, 187);
             this.listBoxParse.TabIndex = 0;
+            // 
+            // listBoxParse2
+            // 
+            this.listBoxParse2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxParse2.FormattingEnabled = true;
+            this.listBoxParse2.ItemHeight = 12;
+            this.listBoxParse2.Location = new System.Drawing.Point(0, 0);
+            this.listBoxParse2.Name = "listBoxParse2";
+            this.listBoxParse2.Size = new System.Drawing.Size(355, 187);
+            this.listBoxParse2.TabIndex = 0;
             // 
             // checkBoxPromiscuous
             // 
@@ -230,7 +276,7 @@
             this.checkBoxPromiscuous.AutoSize = true;
             this.checkBoxPromiscuous.Checked = true;
             this.checkBoxPromiscuous.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxPromiscuous.Location = new System.Drawing.Point(401, 26);
+            this.checkBoxPromiscuous.Location = new System.Drawing.Point(382, 26);
             this.checkBoxPromiscuous.Name = "checkBoxPromiscuous";
             this.checkBoxPromiscuous.Size = new System.Drawing.Size(72, 16);
             this.checkBoxPromiscuous.TabIndex = 15;
@@ -243,7 +289,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFilter.Location = new System.Drawing.Point(56, 24);
             this.textBoxFilter.Name = "textBoxFilter";
-            this.textBoxFilter.Size = new System.Drawing.Size(261, 21);
+            this.textBoxFilter.Size = new System.Drawing.Size(242, 21);
             this.textBoxFilter.TabIndex = 16;
             // 
             // label1
@@ -261,7 +307,7 @@
             this.checkBoxAutoScroll.AutoSize = true;
             this.checkBoxAutoScroll.Checked = true;
             this.checkBoxAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAutoScroll.Location = new System.Drawing.Point(323, 26);
+            this.checkBoxAutoScroll.Location = new System.Drawing.Point(304, 26);
             this.checkBoxAutoScroll.Name = "checkBoxAutoScroll";
             this.checkBoxAutoScroll.Size = new System.Drawing.Size(72, 16);
             this.checkBoxAutoScroll.TabIndex = 18;
@@ -283,26 +329,16 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(741, 437);
+            this.panel1.Size = new System.Drawing.Size(722, 437);
             this.panel1.TabIndex = 19;
-            // 
-            // listBoxParse2
-            // 
-            this.listBoxParse2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxParse2.FormattingEnabled = true;
-            this.listBoxParse2.ItemHeight = 12;
-            this.listBoxParse2.Location = new System.Drawing.Point(0, 0);
-            this.listBoxParse2.Name = "listBoxParse2";
-            this.listBoxParse2.Size = new System.Drawing.Size(364, 187);
-            this.listBoxParse2.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(741, 437);
+            this.ClientSize = new System.Drawing.Size(722, 437);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "MainForm";
             this.Text = "WinSniffer";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -310,6 +346,11 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            this.splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
@@ -330,7 +371,7 @@
         private System.Windows.Forms.ColumnHeader columnSrc;
         private System.Windows.Forms.ColumnHeader columnDst;
         private System.Windows.Forms.ColumnHeader columnProtocal;
-        private System.Windows.Forms.ColumnHeader columnInfo;
+        private System.Windows.Forms.ColumnHeader columnType;
         private System.Windows.Forms.ComboBox comboBoxDeviceList;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -343,6 +384,8 @@
         private System.Windows.Forms.ColumnHeader columnLength;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ListBox listBoxParse2;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.TextBox textBoxBinary;
     }
 }
 

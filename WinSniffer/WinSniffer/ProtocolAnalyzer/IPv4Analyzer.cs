@@ -16,7 +16,7 @@ namespace WinSniffer
         public int identification;
         public int flags;
         public int fragmentOffset;
-        public byte TTL;
+        public int TTL;
         public byte protocol;
         public int headerChecksum;
         public IPAddress sourceIP;
