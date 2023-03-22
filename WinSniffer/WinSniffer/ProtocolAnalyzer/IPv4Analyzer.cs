@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinSniffer
+namespace WinSniffer.ProtocolAnalyzer
 {
     public class IPv4Info
     {
@@ -21,6 +21,7 @@ namespace WinSniffer
         public int headerChecksum;
         public IPAddress sourceIP;
         public IPAddress destinationIP;
+        public byte[] payload;
     }
 
     public static class IPv4Analyzer
@@ -30,7 +31,7 @@ namespace WinSniffer
         {
             IPv4Info info = new IPv4Info();
             info.version = (packet[0] >> 4) & 0xF;
-            info.headerLength = (packet[0] & 0xF) * 4;
+            info.headerLength = (packet[0] & 0xF);
             info.ToS = packet[1];
             info.totalLength = packet[2] << 8 | packet[3];
             info.identification = packet[4] << 8 | packet[5];
@@ -41,6 +42,7 @@ namespace WinSniffer
             info.headerChecksum = packet[10] << 8 | packet[11];
             info.sourceIP = new IPAddress(new byte[] { packet[12], packet[13], packet[14], packet[15] });
             info.destinationIP = new IPAddress(new byte[] { packet[16], packet[17], packet[18], packet[19] });
+            info.payload = packet.Skip(info.headerLength * 4).ToArray();
             return info;
         }
     }

@@ -36,9 +36,9 @@
             this.columnTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnSrc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnDst = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnProtocal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnEtherType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnProtocol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comboBoxDeviceList = new System.Windows.Forms.ComboBox();
             this.buttonClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -81,7 +81,7 @@
             // 
             this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonStop.Location = new System.Drawing.Point(546, 22);
-            this.buttonStop.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonStop.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(83, 23);
             this.buttonStop.TabIndex = 6;
@@ -93,7 +93,7 @@
             // 
             this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonStart.Location = new System.Drawing.Point(459, 22);
-            this.buttonStart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(83, 23);
             this.buttonStart.TabIndex = 7;
@@ -110,13 +110,13 @@
             this.columnTime,
             this.columnSrc,
             this.columnDst,
-            this.columnProtocal,
+            this.columnEtherType,
             this.columnLength,
-            this.columnType});
+            this.columnProtocol});
             this.listViewPacket.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewPacket.HideSelection = false;
             this.listViewPacket.Location = new System.Drawing.Point(0, 0);
-            this.listViewPacket.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
             this.listViewPacket.Size = new System.Drawing.Size(358, 195);
@@ -145,20 +145,20 @@
             this.columnDst.Text = "Destination";
             this.columnDst.Width = 150;
             // 
-            // columnProtocal
+            // columnEtherType
             // 
-            this.columnProtocal.Text = "Protocal";
-            this.columnProtocal.Width = 150;
+            this.columnEtherType.Text = "EtherType";
+            this.columnEtherType.Width = 100;
             // 
             // columnLength
             // 
             this.columnLength.Text = "Length";
             this.columnLength.Width = 100;
             // 
-            // columnType
+            // columnProtocol
             // 
-            this.columnType.Text = "Type";
-            this.columnType.Width = 50;
+            this.columnProtocol.Text = "Protocol";
+            this.columnProtocol.Width = 100;
             // 
             // comboBoxDeviceList
             // 
@@ -174,7 +174,7 @@
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClear.Location = new System.Drawing.Point(633, 22);
-            this.buttonClear.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonClear.Margin = new System.Windows.Forms.Padding(2);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(83, 23);
             this.buttonClear.TabIndex = 13;
@@ -206,7 +206,7 @@
             // 
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer3.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer3.Name = "splitContainer3";
             // 
             // splitContainer3.Panel1
@@ -225,7 +225,7 @@
             // 
             this.textBoxBinary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxBinary.Location = new System.Drawing.Point(0, 0);
-            this.textBoxBinary.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxBinary.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxBinary.Multiline = true;
             this.textBoxBinary.Name = "textBoxBinary";
             this.textBoxBinary.Size = new System.Drawing.Size(356, 195);
@@ -255,7 +255,7 @@
             this.listBoxParse.HorizontalScrollbar = true;
             this.listBoxParse.ItemHeight = 12;
             this.listBoxParse.Location = new System.Drawing.Point(0, 0);
-            this.listBoxParse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listBoxParse.Margin = new System.Windows.Forms.Padding(2);
             this.listBoxParse.Name = "listBoxParse";
             this.listBoxParse.Size = new System.Drawing.Size(357, 187);
             this.listBoxParse.TabIndex = 0;
@@ -338,7 +338,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(722, 437);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "WinSniffer";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -370,8 +370,8 @@
         private System.Windows.Forms.ColumnHeader columnTime;
         private System.Windows.Forms.ColumnHeader columnSrc;
         private System.Windows.Forms.ColumnHeader columnDst;
-        private System.Windows.Forms.ColumnHeader columnProtocal;
-        private System.Windows.Forms.ColumnHeader columnType;
+        private System.Windows.Forms.ColumnHeader columnEtherType;
+        private System.Windows.Forms.ColumnHeader columnProtocol;
         private System.Windows.Forms.ComboBox comboBoxDeviceList;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.SplitContainer splitContainer1;

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PacketDotNet;
 using SharpPcap;
+using WinSniffer.ProtocolAnalyzer;
 
 namespace WinSniffer
 {
@@ -27,7 +28,8 @@ namespace WinSniffer
         private object queueLock = new object(); // 队列锁
         private object parsedLock = new object(); // lock for parsedPacketDict
         private List<RawCapture> packetQueue = new List<RawCapture>(); // 包队列
-        private bool backgroundThreadStop = false;
+        private bool analyzeThreadStop = false;
+        private bool listviewThreadStop = false;
         private int deviceId;
         
         private int id;
@@ -42,6 +44,7 @@ namespace WinSniffer
         private Dictionary<int, IPv4Info> ipv4InfoDict;
         private Dictionary<int, IPv6Info> ipv6InfoDict;
         private Dictionary<int, ARPInfo> arpInfoDict;
+        private Dictionary<int, TCPInfo> tcpInfoDict;
 
         public MainForm()
         {
@@ -102,6 +105,10 @@ namespace WinSniffer
                 }
                 item.SubItems.Add(parsed.ethernetType.ToString());
                 item.SubItems.Add(parsed.packageLength.ToString());
+                if (parsed.ethernetType == EthernetType.IPv4)
+                {
+                    item.SubItems.Add(((ProtocolType)parsed.ipv4.protocol).ToString());
+                }
                 listViewPacket.Items.Add(item);
             }
 
@@ -114,7 +121,7 @@ namespace WinSniffer
         // 更新列表的线程
         private void ListViewThread()
         {
-            while (!backgroundThreadStop)
+            while (!listviewThreadStop)
             {
                 bool sleep = true;
                 lock (parsedLock)
@@ -127,7 +134,14 @@ namespace WinSniffer
 
                 if (sleep)
                 {
-                    Thread.Sleep(threadDelay);
+                    if (analyzeThreadStop)
+                    {
+                        listviewThreadStop = true;
+                    }
+                    else
+                    {
+                        Thread.Sleep(threadDelay);
+                    }
                 }
                 else
                 {
@@ -152,7 +166,7 @@ namespace WinSniffer
                 device.OnPacketArrival -= arrivalEventHandler;
                 device.OnCaptureStopped -= captureStoppedEventHandler;
                 //device = null;
-                backgroundThreadStop = true;
+                analyzeThreadStop = true;
                 analyzerThread.Join();
                 listviewThread.Join();
             }
@@ -183,11 +197,13 @@ namespace WinSniffer
             ipv4InfoDict = new Dictionary<int, IPv4Info>();
             ipv6InfoDict = new Dictionary<int, IPv6Info>();
             arpInfoDict = new Dictionary<int, ARPInfo>();
+            tcpInfoDict = new Dictionary<int, TCPInfo>();
 
-            backgroundThreadStop = false;
+            analyzeThreadStop = false;
             analyzerThread = new Thread(new ThreadStart(AnalyzerThread));
             analyzerThread.Start();
 
+            listviewThreadStop = false;
             listviewThread = new Thread(new ThreadStart(ListViewThread));
             listviewThread.Start();
 
@@ -220,7 +236,7 @@ namespace WinSniffer
         // 解析包的线程
         private void AnalyzerThread()
         {
-            while (!backgroundThreadStop)
+            while (!analyzeThreadStop)
             {
                 bool sleep = true;
                 // 处理队列
@@ -293,6 +309,11 @@ namespace WinSniffer
                                     break;
                             }
                         }
+
+                        if (0x8000 == ethernetInfo.etherType)
+                        {
+                            // TBD
+                        }
                     }
                 }
             }
@@ -329,7 +350,7 @@ namespace WinSniffer
                         listBoxParse.Items.Add("IPv4");
                         listBoxParse.Items.Add("--------------------------------------------------");
                         listBoxParse.Items.Add("version:" + ipv4.version);
-                        listBoxParse.Items.Add("headerLength:" + ipv4.headerLength * (32 / 8));
+                        listBoxParse.Items.Add("headerLength:" + ipv4.headerLength);
                         listBoxParse.Items.Add("ToS:" + ipv4.ToS);
                         listBoxParse.Items.Add("totalLength:" + ipv4.totalLength);
                         listBoxParse.Items.Add("identification:" + ipv4.identification);
@@ -380,27 +401,27 @@ namespace WinSniffer
                             listBoxParse.Items.Add("--------------------------------------------------");
                             listBoxParse.Items.Add("TCP");
                             listBoxParse.Items.Add("--------------------------------------------------");
-                            listBoxParse.Items.Add("sourcePort:" + curPacket.TCPSourcePort);
-                            listBoxParse.Items.Add("destinationPort:" + curPacket.TCPDestinationPort);
-                            listBoxParse.Items.Add("sequenceNumber:" + curPacket.TCPSequenceNumber);
-                            listBoxParse.Items.Add("acknowledgementNumber:" + curPacket.TCPAcknowledgementNumber);
-                            listBoxParse.Items.Add("dataOffset:" + curPacket.TCPDataOffset);
-                            listBoxParse.Items.Add("flags:" + curPacket.TCPFlags);
-                            listBoxParse.Items.Add("windowSize:" + curPacket.TCPWindowSize);
-                            listBoxParse.Items.Add("checksum:" + curPacket.TCPChecksum);
-                            listBoxParse.Items.Add("urgentPointer:" + curPacket.TCPUrgentPointer);
-                            listBoxParse.Items.Add("options:" + BitConverter.ToString(curPacket.TCPOptions).Replace("-", " "));
-                            listBoxParse.Items.Add("payload:" + BitConverter.ToString(curPacket.TCPPayload).Replace("-", " "));
+                            listBoxParse.Items.Add("sourcePort:" + curPacket.tcp.sourcePort);
+                            listBoxParse.Items.Add("destinationPort:" + curPacket.tcp.destinationPort);
+                            listBoxParse.Items.Add("sequenceNumber:" + curPacket.tcp.sequenceNumber);
+                            listBoxParse.Items.Add("acknowledgementNumber:" + curPacket.tcp.acknowledgementNumber);
+                            listBoxParse.Items.Add("dataOffset:" + curPacket.tcp.dataOffset);
+                            listBoxParse.Items.Add("flags:" + curPacket.tcp.flags);
+                            listBoxParse.Items.Add("windowSize:" + curPacket.tcp.windowSize);
+                            listBoxParse.Items.Add("checksum:" + curPacket.tcp.checksum);
+                            listBoxParse.Items.Add("urgentPointer:" + curPacket.tcp.urgentPointer);
+                            listBoxParse.Items.Add("options:" + BitConverter.ToString(curPacket.tcp.options).Replace("-", " "));
+                            listBoxParse.Items.Add("payload:" + BitConverter.ToString(curPacket.tcp.payload).Replace("-", " "));
                             break;
                         case ProtocolType.Udp:
                             listBoxParse.Items.Add("--------------------------------------------------");
                             listBoxParse.Items.Add("UDP");
                             listBoxParse.Items.Add("--------------------------------------------------");
-                            listBoxParse.Items.Add("sourcePort:" + curPacket.UDPSourcePort);
-                            listBoxParse.Items.Add("destinationPort:" + curPacket.UDPDestinationPort);
-                            listBoxParse.Items.Add("length:" + curPacket.UDPLength);
-                            listBoxParse.Items.Add("checksum:" + curPacket.UDPChecksum);
-                            listBoxParse.Items.Add("payload:" + BitConverter.ToString(curPacket.UDPPayload).Replace("-", " "));
+                            listBoxParse.Items.Add("sourcePort:" + curPacket.udp.sourcePort);
+                            listBoxParse.Items.Add("destinationPort:" + curPacket.udp.destinationPort);
+                            listBoxParse.Items.Add("length:" + curPacket.udp.length);
+                            listBoxParse.Items.Add("checksum:" + curPacket.udp.checksum);
+                            listBoxParse.Items.Add("payload:" + BitConverter.ToString(curPacket.udp.payload).Replace("-", " "));
                             break;
                         default:
                             break;
@@ -439,6 +460,43 @@ namespace WinSniffer
                             listBoxParse2.Items.Add("headerChecksum:" + ipv4Info.headerChecksum);
                             listBoxParse2.Items.Add("Source IP:" + ipv4Info.sourceIP.ToString());
                             listBoxParse2.Items.Add("Destination IP:" + ipv4Info.destinationIP.ToString());
+                            switch (ipv4Info.protocol)
+                            {
+                                case 6:
+                                    // TCP
+                                    TCPInfo tcpInfo = TCPAnalyzer.Analyze(ipv4Info.payload);
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("TCP");
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("sourcePort:" + tcpInfo.sourcePort);
+                                    listBoxParse2.Items.Add("destinationPort:" + tcpInfo.destinationPort);
+                                    listBoxParse2.Items.Add("sequenceNumber:" + tcpInfo.sequenceNumber);
+                                    listBoxParse2.Items.Add("acknowledgementNumber:" + tcpInfo.acknowledgementNumber);
+                                    listBoxParse2.Items.Add("dataOffset:" + tcpInfo.dataOffset);
+                                    listBoxParse2.Items.Add("flags:" + tcpInfo.flags);
+                                    listBoxParse2.Items.Add("windowSize:" + tcpInfo.windowSize);
+                                    listBoxParse2.Items.Add("checksum:" + tcpInfo.checksum);
+                                    listBoxParse2.Items.Add("urgentPointer:" + tcpInfo.urgentPointer);
+                                    listBoxParse2.Items.Add("options:" + BitConverter.ToString(tcpInfo.options).Replace("-", ":"));
+                                    listBoxParse2.Items.Add("payload:" + BitConverter.ToString(tcpInfo.payload).Replace("-", ":"));
+                                    break;
+                                case 17:
+                                    // UDP
+                                    UDPInfo udpInfo = UDPAnalyzer.Analyze(ipv4Info.payload);
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("UDP");
+                                    listBoxParse2.Items.Add("--------------------------------------------------");
+                                    listBoxParse2.Items.Add("sourcePort:" + udpInfo.sourcePort);
+                                    listBoxParse2.Items.Add("destinationPort:" + udpInfo.destinationPort);
+                                    listBoxParse2.Items.Add("length:" + udpInfo.length);
+                                    listBoxParse2.Items.Add("checksum:" + udpInfo.checksum);
+                                    listBoxParse2.Items.Add("payload:" + BitConverter.ToString(udpInfo.payload).Replace("-", ":"));
+
+                                    break;
+                                default:
+                                    break;
+                            }
+
                             break;
                         case 0x86DD:    // IPv6
                             IPv6Info ipv6Info = ipv6InfoDict[id];
@@ -514,6 +572,7 @@ namespace WinSniffer
             if (ipv4InfoDict != null) ipv4InfoDict.Clear();
             if (ipv6InfoDict != null) ipv6InfoDict.Clear();
             if (arpInfoDict != null) arpInfoDict.Clear();
+            if (tcpInfoDict != null) tcpInfoDict.Clear();
         }
 
         // 清空按钮

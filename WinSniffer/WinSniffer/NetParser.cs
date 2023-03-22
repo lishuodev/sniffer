@@ -10,6 +10,7 @@ using SharpPcap;
 using System.Drawing.Printing;
 using PacketDotNet.Lsa;
 using System.Runtime.InteropServices;
+using WinSniffer.ProtocolAnalyzer;
 
 namespace WinSniffer
 {
@@ -85,38 +86,35 @@ namespace WinSniffer
                     switch ((ProtocolType)parsed.ipv4.protocol)
                     {
                         case ProtocolType.Tcp:
+                            TCPInfo tcpInfo = new TCPInfo();
+                            parsed.tcp = tcpInfo;
                             var tcp = packet.Extract<PacketDotNet.TcpPacket>();
-                            parsed.TCPSourcePort= tcp.SourcePort;
-                            parsed.TCPDestinationPort = tcp.DestinationPort;
-                            parsed.TCPSequenceNumber = tcp.SequenceNumber;
-                            parsed.TCPAcknowledgementNumber = tcp.AcknowledgmentNumber;
-                            parsed.TCPDataOffset = tcp.DataOffset;
-                            parsed.TCPFlags = tcp.Flags;
-                            parsed.TCPWindowSize = tcp.WindowSize;
-                            parsed.TCPChecksum = tcp.Checksum;
-                            parsed.TCPUrgentPointer = tcp.UrgentPointer;
-                            if (tcp.Options != null)
-                            {
-                                parsed.TCPOptions = new byte[tcp.Options.Length];
-                                Array.Copy(tcp.Options, parsed.TCPOptions, tcp.Options.Length);
-                            }
-                            if (tcp.PayloadData!= null)
-                            {
-                                parsed.TCPPayload = new byte[tcp.PayloadData.Length];
-                                Array.Copy(tcp.PayloadData, parsed.TCPPayload, tcp.PayloadData.Length);
-                            }
+                            tcpInfo.sourcePort = tcp.SourcePort;
+                            tcpInfo.destinationPort = tcp.DestinationPort;
+                            tcpInfo.sequenceNumber = tcp.SequenceNumber;
+                            tcpInfo.acknowledgementNumber = tcp.AcknowledgmentNumber;
+                            tcpInfo.dataOffset = tcp.DataOffset;
+                            tcpInfo.flags = tcp.Flags;
+                            tcpInfo.windowSize = tcp.WindowSize;
+                            tcpInfo.checksum = tcp.Checksum;
+                            tcpInfo.urgentPointer = tcp.UrgentPointer;
+                            tcpInfo.options = new byte[tcp.Options.Length];
+                            Array.Copy(tcp.Options, tcpInfo.options, tcp.Options.Length);
+                            tcpInfo.payload = new byte[tcp.PayloadData.Length];
+                            Array.Copy(tcp.PayloadData, tcpInfo.payload, tcp.PayloadData.Length);
+
                             break;
                         case ProtocolType.Udp:
+                            UDPInfo udpInfo = new UDPInfo();
+                            parsed.udp = udpInfo;
                             var udp = packet.Extract<PacketDotNet.UdpPacket>();
-                            parsed.UDPSourcePort = udp.SourcePort;
-                            parsed.UDPDestinationPort = udp.DestinationPort;
-                            parsed.UDPLength = udp.Length;
-                            parsed.UDPChecksum = udp.Checksum;
-                            if (udp.PayloadData != null)
-                            {
-                                parsed.UDPPayload = new byte[udp.PayloadData.Length];
-                                Array.Copy(udp.PayloadData, parsed.UDPPayload, udp.PayloadData.Length);
-                            }
+                            udpInfo.sourcePort = udp.SourcePort;
+                            udpInfo.destinationPort = udp.DestinationPort;
+                            udpInfo.length = udp.Length;
+                            udpInfo.checksum = udp.Checksum;
+                            udpInfo.payload = new byte[udp.PayloadData.Length];
+                            Array.Copy(udp.PayloadData, udpInfo.payload, udp.PayloadData.Length);
+                            
                             break;
                         default:
                             break;
@@ -158,26 +156,8 @@ namespace WinSniffer
         public IPv4Info ipv4;
         public IPv6Info ipv6;
         public ARPInfo arp;
-
-        // TCP
-        public ushort TCPSourcePort;
-        public ushort TCPDestinationPort;
-        public uint TCPSequenceNumber;
-        public uint TCPAcknowledgementNumber;
-        public int TCPDataOffset;
-        public ushort TCPFlags;
-        public ushort TCPWindowSize;
-        public ushort TCPChecksum;
-        public int TCPUrgentPointer;
-        public byte[] TCPOptions;
-        public byte[] TCPPayload;
-
-        // UDP
-        public ushort UDPSourcePort;
-        public ushort UDPDestinationPort;
-        public int UDPLength;
-        public ushort UDPChecksum;
-        public byte[] UDPPayload;
+        public TCPInfo tcp;
+        public UDPInfo udp;
 
     }
 }
