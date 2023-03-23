@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcessTracer.cs" />
     <Compile Include="ProtocolAnalyzer\ARPAnalyzer.cs" />
     <Compile Include="ProtocolAnalyzer\EthernetAnalyzer.cs" />
     <Compile Include="ProtocolAnalyzer\IPv4Analyzer.cs" />

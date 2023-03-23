@@ -46,6 +46,8 @@ namespace WinSniffer
         private Dictionary<int, ARPInfo> arpInfoDict;
         private Dictionary<int, TCPInfo> tcpInfoDict;
 
+        private List<CheckBox> checkBoxList;
+
         public MainForm()
         {
             InitializeComponent();
@@ -57,6 +59,10 @@ namespace WinSniffer
             buttonStop.Enabled = false;
             buttonClear.Enabled = true;
             listViewPacket.FullRowSelect = true;
+            checkBoxList = new List<CheckBox>
+            {
+                checkBoxPromiscuous, checkBoxIPv4, checkBoxIPv6, checkBoxICMP, checkBoxARP, checkBoxTCP, checkBoxUDP, checkBoxTLS, checkBoxHTTP,
+            };
 
             // 更新设备下拉列表
             foreach (var dev in CaptureDeviceList.Instance)
@@ -156,7 +162,11 @@ namespace WinSniffer
             buttonStart.Enabled = true;
             buttonClear.Enabled = true;
             comboBoxDeviceList.Enabled = true;
-            checkBoxPromiscuous.Enabled = true;
+            
+            foreach (var checkBox in checkBoxList)
+            {
+                checkBox.Enabled = true;
+            }
 
             if (device != null)
             {
@@ -166,8 +176,8 @@ namespace WinSniffer
                 device.OnCaptureStopped -= captureStoppedEventHandler;
                 //device = null;
                 analyzeThreadStop = true;
-                analyzerThread.Join();
-                listviewThread.Join();
+                //analyzerThread.Join();
+                //listviewThread.Join();
             }
         }
 
@@ -185,7 +195,11 @@ namespace WinSniffer
             buttonStop.Enabled = true;
             buttonClear.Enabled = false;
             comboBoxDeviceList.Enabled = false;
-            checkBoxPromiscuous.Enabled = false;
+            
+            foreach (var checkBox in checkBoxList)
+            {
+                checkBox.Enabled = false;
+            }
 
             id = 0;
             startTime = new PosixTimeval(DateTime.Now);
@@ -224,11 +238,33 @@ namespace WinSniffer
             }
 
             // 设置过滤器
-            if (textBoxFilter.Text != string.Empty)
+            List<string> filters = new List<string>();
+            // 网络层
+            if (checkBoxIPv4.Checked) filters.Add("ip");
+            if (checkBoxIPv6.Checked) filters.Add("ip6");
+            if (checkBoxICMP.Checked) filters.Add("icmp or icmp6");
+            if (checkBoxARP.Checked) filters.Add("arp");
+            // 传输层
+            if (checkBoxTCP.Checked)
             {
-                device.Filter = textBoxFilter.Text;
+                if (checkBoxIPv4.Checked) filters.Add("(ip proto \\tcp)");
+                else if (checkBoxIPv6.Checked) filters.Add("(ip6 proto \\tcp)");
+                else filters.Add("(ip proto \\tcp) or (ip6 proto \\tcp)");
             }
-            
+            if (checkBoxUDP.Checked)
+            {
+                if (checkBoxIPv4.Checked) filters.Add("(ip proto \\udp)");
+                else if (checkBoxIPv6.Checked) filters.Add("(ip6 proto \\udp)");
+                else filters.Add("(ip proto \\udp) or (ip6 proto \\udp)");
+            }
+
+            if (checkBoxTLS.Checked) filters.Add("(tcp port 443)");
+
+            // 应用层
+            if (checkBoxHTTP.Checked) filters.Add("(tcp port 80)");
+
+            device.Filter = string.Join(" or ", filters);
+
             device.StartCapture();
         }
 
