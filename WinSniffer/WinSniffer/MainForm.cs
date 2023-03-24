@@ -30,6 +30,7 @@ namespace WinSniffer
         private List<RawCapture> packetQueue = new List<RawCapture>(); // 包队列
         private bool analyzeThreadStop = false;
         private bool listviewThreadStop = false;
+        private bool running = false;
         private int deviceId;
         
         private int id;
@@ -38,15 +39,20 @@ namespace WinSniffer
         private Dictionary<int, LibraryParsedPacket> parsedPacketDict;
         private List<LibraryParsedPacket> parsedPacketList;
         private LibraryParsedPacket curPacket;
-        private const int threadDelay = 250;
+        private const int threadDelay = 200;
 
         private Dictionary<int, EthernetInfo> ethernetInfoDict;
         private Dictionary<int, IPv4Info> ipv4InfoDict;
         private Dictionary<int, IPv6Info> ipv6InfoDict;
         private Dictionary<int, ARPInfo> arpInfoDict;
         private Dictionary<int, TCPInfo> tcpInfoDict;
+        private Dictionary<int, byte[]> rawDict;
 
         private List<CheckBox> checkBoxList;
+        private ListViewItem curItem;
+        private LibraryParsedPacket tracePacket;
+
+        private int selectIndex;
 
         public MainForm()
         {
@@ -70,6 +76,37 @@ namespace WinSniffer
                 var str = String.Format("{0} {1}", dev.Name, dev.Description);
                 comboBoxDeviceList.Items.Add(str);
             }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (running)
+            {
+                e.Cancel = true;
+                var result = MessageBox.Show("监听中,确定要退出吗?", "监听中", MessageBoxButtons.OKCancel);
+                switch (result)
+                {
+                    case DialogResult.OK:
+                        ExitAfterThreadEnd();
+                        break;
+                    case DialogResult.Cancel:
+                        break;
+                }
+            }
+        }
+
+        private void ExitAfterThreadEnd()
+        {
+            StopCapture();
+            if (analyzerThread != null)
+            {
+                analyzerThread.Join();
+            }
+            if (listviewThread != null)
+            {
+                listviewThread.Join();
+            }
+            Application.Exit();
         }
 
         // 更新列表显示
@@ -114,6 +151,7 @@ namespace WinSniffer
                 {
                     item.SubItems.Add(((ProtocolType)parsed.ipv4.protocol).ToString());
                 }
+                
                 listViewPacket.Items.Add(item);
             }
 
@@ -150,7 +188,14 @@ namespace WinSniffer
                 }
                 else
                 {
-                    BeginInvoke(new MethodInvoker(UpdateListView));
+                    try
+                    {
+                        BeginInvoke(new MethodInvoker(UpdateListView));
+                    }
+                    catch (InvalidOperationException e)
+                    {
+
+                    }
                 }
             }
         }
@@ -174,10 +219,9 @@ namespace WinSniffer
                 device.Close();
                 device.OnPacketArrival -= arrivalEventHandler;
                 device.OnCaptureStopped -= captureStoppedEventHandler;
-                //device = null;
                 analyzeThreadStop = true;
-                //analyzerThread.Join();
-                //listviewThread.Join();
+                analyzerThread.Abort();
+                running = false;
             }
         }
 
@@ -185,6 +229,7 @@ namespace WinSniffer
         private void StartCapture()
         {
             Reset();
+            running = true;
 
             deviceId = comboBoxDeviceList.SelectedIndex;
             if (deviceId < 0)
@@ -211,6 +256,7 @@ namespace WinSniffer
             ipv6InfoDict = new Dictionary<int, IPv6Info>();
             arpInfoDict = new Dictionary<int, ARPInfo>();
             tcpInfoDict = new Dictionary<int, TCPInfo>();
+            rawDict = new Dictionary<int, byte[]>();
 
             analyzeThreadStop = false;
             analyzerThread = new Thread(new ThreadStart(AnalyzerThread));
@@ -306,6 +352,7 @@ namespace WinSniffer
                         LibraryParsedPacket libPacket = NetParser.LibraryParsePacket(id, packet);
                         libPacket.time = libPacket.timeval.Value - startTime.Value;
                         parsedPacketDict.Add(id, libPacket);
+                        rawDict.Add(id, packet.Data);
                         
                         lock (parsedLock)
                         {
@@ -360,10 +407,8 @@ namespace WinSniffer
             if (listViewPacket.SelectedIndices.Count > 0)
             {
                 ListViewItem item = listViewPacket.SelectedItems[0];
-                int id = int.Parse(item.SubItems[0].Text);
-                curPacket = parsedPacketDict[id];
-
-                textBoxBinary.Text = curPacket.hex;
+                selectIndex = int.Parse(item.SubItems[0].Text);
+                curPacket = parsedPacketDict[selectIndex];
 
                 listBoxParse.Items.Clear();
 
@@ -484,7 +529,7 @@ namespace WinSniffer
                 listBoxParse2.Items.Clear();
                 listBoxParse2.Items.Add("--------------------------------------------------");
                 listBoxParse2.Items.Add("Binary Analysis");
-                EthernetInfo ethernetInfo = ethernetInfoDict[id];
+                EthernetInfo ethernetInfo = ethernetInfoDict[selectIndex];
                 listBoxParse2.Items.Add("--------------------------------------------------");
                 listBoxParse2.Items.Add("Ethernet");
                 listBoxParse2.Items.Add("--------------------------------------------------");
@@ -492,12 +537,16 @@ namespace WinSniffer
                 listBoxParse2.Items.Add("Destination Mac:" + BitConverter.ToString(ethernetInfo.destinationMac.GetAddressBytes()).Replace("-", ":"));
                 listBoxParse2.Items.Add("EtherType:" +  ethernetInfo.etherType + " " + (EthernetType)ethernetInfo.etherType);
 
+                //textBoxBinary.Text += Environment.NewLine;
+                if (radioButtonBin.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintBin(rawDict[selectIndex]);
+                else if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectIndex]);
+
                 if (ethernetInfo.etherType >= 0x0600 && ethernetInfo.etherType <= 0xFFFF)
                 {
                     switch (ethernetInfo.etherType)
                     {
                         case 0x0800:    // IPv4
-                            IPv4Info ipv4Info = ipv4InfoDict[id];
+                            IPv4Info ipv4Info = ipv4InfoDict[selectIndex];
                             listBoxParse2.Items.Add("--------------------------------------------------");
                             listBoxParse2.Items.Add("IPv4");
                             listBoxParse2.Items.Add("--------------------------------------------------");
@@ -552,7 +601,7 @@ namespace WinSniffer
 
                             break;
                         case 0x86DD:    // IPv6
-                            IPv6Info ipv6Info = ipv6InfoDict[id];
+                            IPv6Info ipv6Info = ipv6InfoDict[selectIndex];
                             listBoxParse2.Items.Add("--------------------------------------------------");
                             listBoxParse2.Items.Add("IPv6");
                             listBoxParse2.Items.Add("--------------------------------------------------");
@@ -605,7 +654,7 @@ namespace WinSniffer
                             }
                             break;
                         case 0x0806:    // ARP
-                            ARPInfo arpInfo = arpInfoDict[id];
+                            ARPInfo arpInfo = arpInfoDict[selectIndex];
                             listBoxParse2.Items.Add("--------------------------------------------------");
                             listBoxParse2.Items.Add("ARP");
                             listBoxParse2.Items.Add("--------------------------------------------------");
@@ -678,5 +727,58 @@ namespace WinSniffer
             OnSelectPacketChanged();
         }
 
+        // 列表项上弹出右键菜单
+        private void listViewPacket_MouseClick(object sender, MouseEventArgs e)
+        {
+            ListViewItem item = listViewPacket.GetItemAt(e.X, e.Y);
+            if (item != null && e.Button == MouseButtons.Right)
+            {
+                curItem = item;
+                int id = curItem.Index + 1;
+                tracePacket = parsedPacketDict[id];
+
+                traceTCPToolStripMenuItem.Enabled = false;
+                //traceUDPToolStripMenuItem.Enabled = false;
+                switch (tracePacket.ethernetType)
+                {
+                    case EthernetType.IPv4:
+                        switch (tracePacket.protocolType)
+                        {
+                            case ProtocolType.Tcp:
+                                traceTCPToolStripMenuItem.Enabled = true;
+                                break;
+                            case ProtocolType.Udp:
+                                //traceUDPToolStripMenuItem.Enabled = true;
+                                break;
+                        }
+                        break;
+                }
+                listviewMenuStrip.Show(listViewPacket, e.X, e.Y);
+            }
+        }
+
+        // 邮件菜单中点"TCP流追踪"按钮
+        private void listviewMenuStripTraceTCP_Click(object sender, EventArgs e)
+        {
+            if (tracePacket != null)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("id:" + tracePacket.id);
+                sb.AppendLine("time:" + tracePacket.time);
+                sb.AppendLine("sourceIP:" + tracePacket.ipv4.sourceIP.ToString());
+                sb.AppendLine("destinationIP:" + tracePacket.ipv4.destinationIP.ToString());
+                textBoxBinary.Text = sb.ToString();
+            }
+        }
+
+        private void radioButtonBin_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonBin.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintBin(rawDict[selectIndex]);
+        }
+
+        private void radioButtonHex_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectIndex]);
+        }
     }
 }

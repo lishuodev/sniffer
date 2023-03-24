@@ -22,7 +22,7 @@ namespace WinSniffer
             LibraryParsedPacket parsed = new LibraryParsedPacket();
             parsed.id = id;
             parsed.timeval = raw.Timeval;
-            var packet = PacketDotNet.Packet.ParsePacket(raw.LinkLayerType, raw.Data);
+            Packet packet = PacketDotNet.Packet.ParsePacket(raw.LinkLayerType, raw.Data);
             parsed.hex = packet.PrintHex();
             parsed.packageLength = raw.PacketLength;
             if (packet is PacketDotNet.EthernetPacket eth)
@@ -102,7 +102,8 @@ namespace WinSniffer
 
                 if (EthernetType.IPv4 == parsed.ethernetType)
                 {
-                    switch ((ProtocolType)parsed.ipv4.protocol)
+                    parsed.protocolType = (ProtocolType)parsed.ipv4.protocol;
+                    switch (parsed.protocolType)
                     {
                         case ProtocolType.Tcp:
                             TCPInfo tcpInfo = new TCPInfo();
@@ -171,6 +172,7 @@ namespace WinSniffer
         public PhysicalAddress sourceMac;
         public PhysicalAddress destinationMac;
         public EthernetType ethernetType;
+        public ProtocolType protocolType;
 
         public IPv4Info ipv4;
         public IPv6Info ipv6;
