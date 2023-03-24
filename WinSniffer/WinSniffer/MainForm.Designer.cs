@@ -51,26 +51,26 @@
             this.checkBoxPromiscuous = new System.Windows.Forms.CheckBox();
             this.checkBoxAutoScroll = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.radioButtonHex = new System.Windows.Forms.RadioButton();
+            this.radioButtonBin = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.buttonCancelTrace = new System.Windows.Forms.Button();
             this.textBoxTrace = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.checkBoxHTTP = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBoxTLS = new System.Windows.Forms.CheckBox();
-            this.checkBoxUDP = new System.Windows.Forms.CheckBox();
-            this.checkBoxTCP = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxHTTP = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.checkBoxTLS = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxUDP = new System.Windows.Forms.CheckBox();
             this.checkBoxARP = new System.Windows.Forms.CheckBox();
             this.checkBoxICMP = new System.Windows.Forms.CheckBox();
+            this.checkBoxTCP = new System.Windows.Forms.CheckBox();
             this.checkBoxIPv6 = new System.Windows.Forms.CheckBox();
             this.checkBoxIPv4 = new System.Windows.Forms.CheckBox();
             this.listviewMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.流追踪ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traceTCPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.radioButtonBin = new System.Windows.Forms.RadioButton();
-            this.radioButtonHex = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -84,12 +84,10 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.listviewMenuStrip.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelCurrentDevice
@@ -105,10 +103,10 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(698, 30);
+            this.buttonStop.Location = new System.Drawing.Point(658, 63);
             this.buttonStop.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(75, 23);
+            this.buttonStop.Size = new System.Drawing.Size(100, 23);
             this.buttonStop.TabIndex = 6;
             this.buttonStop.Text = "停止";
             this.buttonStop.UseVisualStyleBackColor = true;
@@ -116,10 +114,10 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(617, 30);
+            this.buttonStart.Location = new System.Drawing.Point(658, 36);
             this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(75, 23);
+            this.buttonStart.Size = new System.Drawing.Size(100, 23);
             this.buttonStart.TabIndex = 7;
             this.buttonStart.Text = "开始";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -143,7 +141,7 @@
             this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(400, 183);
+            this.listViewPacket.Size = new System.Drawing.Size(392, 183);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
@@ -192,15 +190,15 @@
             this.comboBoxDeviceList.FormattingEnabled = true;
             this.comboBoxDeviceList.Location = new System.Drawing.Point(61, 6);
             this.comboBoxDeviceList.Name = "comboBoxDeviceList";
-            this.comboBoxDeviceList.Size = new System.Drawing.Size(711, 20);
+            this.comboBoxDeviceList.Size = new System.Drawing.Size(697, 20);
             this.comboBoxDeviceList.TabIndex = 12;
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(698, 56);
+            this.buttonClear.Location = new System.Drawing.Point(658, 90);
             this.buttonClear.Margin = new System.Windows.Forms.Padding(2);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(75, 23);
+            this.buttonClear.Size = new System.Drawing.Size(100, 23);
             this.buttonClear.TabIndex = 13;
             this.buttonClear.Text = "清空";
             this.buttonClear.UseVisualStyleBackColor = true;
@@ -222,7 +220,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(773, 376);
+            this.splitContainer1.Size = new System.Drawing.Size(758, 376);
             this.splitContainer1.SplitterDistance = 183;
             this.splitContainer1.TabIndex = 14;
             // 
@@ -240,8 +238,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.textBoxBinary);
-            this.splitContainer3.Size = new System.Drawing.Size(773, 183);
-            this.splitContainer3.SplitterDistance = 400;
+            this.splitContainer3.Size = new System.Drawing.Size(758, 183);
+            this.splitContainer3.SplitterDistance = 392;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 12;
             // 
@@ -253,7 +251,7 @@
             this.textBoxBinary.Multiline = true;
             this.textBoxBinary.Name = "textBoxBinary";
             this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxBinary.Size = new System.Drawing.Size(371, 183);
+            this.textBoxBinary.Size = new System.Drawing.Size(364, 183);
             this.textBoxBinary.TabIndex = 0;
             this.textBoxBinary.WordWrap = false;
             // 
@@ -270,8 +268,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.listBoxParse2);
-            this.splitContainer2.Size = new System.Drawing.Size(773, 189);
-            this.splitContainer2.SplitterDistance = 400;
+            this.splitContainer2.Size = new System.Drawing.Size(758, 189);
+            this.splitContainer2.SplitterDistance = 392;
             this.splitContainer2.TabIndex = 0;
             // 
             // listBoxParse
@@ -283,7 +281,7 @@
             this.listBoxParse.Location = new System.Drawing.Point(0, 0);
             this.listBoxParse.Margin = new System.Windows.Forms.Padding(2);
             this.listBoxParse.Name = "listBoxParse";
-            this.listBoxParse.Size = new System.Drawing.Size(400, 189);
+            this.listBoxParse.Size = new System.Drawing.Size(392, 189);
             this.listBoxParse.TabIndex = 0;
             // 
             // listBoxParse2
@@ -293,7 +291,7 @@
             this.listBoxParse2.ItemHeight = 12;
             this.listBoxParse2.Location = new System.Drawing.Point(0, 0);
             this.listBoxParse2.Name = "listBoxParse2";
-            this.listBoxParse2.Size = new System.Drawing.Size(369, 189);
+            this.listBoxParse2.Size = new System.Drawing.Size(362, 189);
             this.listBoxParse2.TabIndex = 0;
             // 
             // checkBoxPromiscuous
@@ -301,7 +299,7 @@
             this.checkBoxPromiscuous.AutoSize = true;
             this.checkBoxPromiscuous.Checked = true;
             this.checkBoxPromiscuous.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxPromiscuous.Location = new System.Drawing.Point(522, 34);
+            this.checkBoxPromiscuous.Location = new System.Drawing.Point(583, 40);
             this.checkBoxPromiscuous.Name = "checkBoxPromiscuous";
             this.checkBoxPromiscuous.Size = new System.Drawing.Size(72, 16);
             this.checkBoxPromiscuous.TabIndex = 15;
@@ -313,7 +311,7 @@
             this.checkBoxAutoScroll.AutoSize = true;
             this.checkBoxAutoScroll.Checked = true;
             this.checkBoxAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAutoScroll.Location = new System.Drawing.Point(522, 56);
+            this.checkBoxAutoScroll.Location = new System.Drawing.Point(583, 67);
             this.checkBoxAutoScroll.Name = "checkBoxAutoScroll";
             this.checkBoxAutoScroll.Size = new System.Drawing.Size(72, 16);
             this.checkBoxAutoScroll.TabIndex = 18;
@@ -324,8 +322,6 @@
             // 
             this.panel1.Controls.Add(this.groupBox5);
             this.panel1.Controls.Add(this.groupBox4);
-            this.panel1.Controls.Add(this.groupBox3);
-            this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.buttonClear);
             this.panel1.Controls.Add(this.checkBoxPromiscuous);
@@ -338,8 +334,43 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(779, 506);
+            this.panel1.Size = new System.Drawing.Size(764, 506);
             this.panel1.TabIndex = 19;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.radioButtonHex);
+            this.groupBox5.Controls.Add(this.radioButtonBin);
+            this.groupBox5.Location = new System.Drawing.Point(417, 32);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(160, 41);
+            this.groupBox5.TabIndex = 24;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "字节显示";
+            // 
+            // radioButtonHex
+            // 
+            this.radioButtonHex.AutoSize = true;
+            this.radioButtonHex.Checked = true;
+            this.radioButtonHex.Location = new System.Drawing.Point(82, 17);
+            this.radioButtonHex.Name = "radioButtonHex";
+            this.radioButtonHex.Size = new System.Drawing.Size(71, 16);
+            this.radioButtonHex.TabIndex = 1;
+            this.radioButtonHex.TabStop = true;
+            this.radioButtonHex.Text = "十六进制";
+            this.radioButtonHex.UseVisualStyleBackColor = true;
+            this.radioButtonHex.CheckedChanged += new System.EventHandler(this.radioButtonHex_CheckedChanged);
+            // 
+            // radioButtonBin
+            // 
+            this.radioButtonBin.AutoSize = true;
+            this.radioButtonBin.Location = new System.Drawing.Point(10, 17);
+            this.radioButtonBin.Name = "radioButtonBin";
+            this.radioButtonBin.Size = new System.Drawing.Size(59, 16);
+            this.radioButtonBin.TabIndex = 0;
+            this.radioButtonBin.Text = "二进制";
+            this.radioButtonBin.UseVisualStyleBackColor = true;
+            this.radioButtonBin.CheckedChanged += new System.EventHandler(this.radioButtonBin_CheckedChanged);
             // 
             // groupBox4
             // 
@@ -347,105 +378,98 @@
             this.groupBox4.Controls.Add(this.textBoxTrace);
             this.groupBox4.Location = new System.Drawing.Point(3, 79);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(308, 45);
+            this.groupBox4.Size = new System.Drawing.Size(389, 45);
             this.groupBox4.TabIndex = 23;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "流追踪";
             // 
             // buttonCancelTrace
             // 
-            this.buttonCancelTrace.Location = new System.Drawing.Point(226, 16);
+            this.buttonCancelTrace.Location = new System.Drawing.Point(283, 15);
             this.buttonCancelTrace.Name = "buttonCancelTrace";
-            this.buttonCancelTrace.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancelTrace.Size = new System.Drawing.Size(100, 23);
             this.buttonCancelTrace.TabIndex = 1;
             this.buttonCancelTrace.Text = "取消";
             this.buttonCancelTrace.UseVisualStyleBackColor = true;
+            this.buttonCancelTrace.Click += new System.EventHandler(this.buttonCancelTrace_Click);
             // 
             // textBoxTrace
             // 
-            this.textBoxTrace.Location = new System.Drawing.Point(6, 17);
+            this.textBoxTrace.Enabled = false;
+            this.textBoxTrace.Location = new System.Drawing.Point(6, 16);
             this.textBoxTrace.Name = "textBoxTrace";
-            this.textBoxTrace.Size = new System.Drawing.Size(214, 21);
+            this.textBoxTrace.Size = new System.Drawing.Size(273, 21);
             this.textBoxTrace.TabIndex = 0;
             // 
-            // groupBox3
+            // groupBox1
             // 
-            this.groupBox3.Controls.Add(this.checkBoxHTTP);
-            this.groupBox3.Location = new System.Drawing.Point(393, 32);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(123, 41);
-            this.groupBox3.TabIndex = 21;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "协议过滤(应用层)";
+            this.groupBox1.Controls.Add(this.checkBoxHTTP);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.checkBoxTLS);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.checkBoxUDP);
+            this.groupBox1.Controls.Add(this.checkBoxARP);
+            this.groupBox1.Controls.Add(this.checkBoxICMP);
+            this.groupBox1.Controls.Add(this.checkBoxTCP);
+            this.groupBox1.Controls.Add(this.checkBoxIPv6);
+            this.groupBox1.Controls.Add(this.checkBoxIPv4);
+            this.groupBox1.Location = new System.Drawing.Point(3, 32);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(408, 41);
+            this.groupBox1.TabIndex = 19;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "协议筛选";
             // 
             // checkBoxHTTP
             // 
             this.checkBoxHTTP.AutoSize = true;
             this.checkBoxHTTP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxHTTP.Location = new System.Drawing.Point(6, 17);
+            this.checkBoxHTTP.Location = new System.Drawing.Point(358, 17);
             this.checkBoxHTTP.Name = "checkBoxHTTP";
             this.checkBoxHTTP.Size = new System.Drawing.Size(48, 16);
             this.checkBoxHTTP.TabIndex = 1;
             this.checkBoxHTTP.Text = "HTTP";
             this.checkBoxHTTP.UseVisualStyleBackColor = false;
             // 
-            // groupBox2
+            // label2
             // 
-            this.groupBox2.Controls.Add(this.checkBoxTLS);
-            this.groupBox2.Controls.Add(this.checkBoxUDP);
-            this.groupBox2.Controls.Add(this.checkBoxTCP);
-            this.groupBox2.Location = new System.Drawing.Point(229, 32);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(158, 41);
-            this.groupBox2.TabIndex = 20;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "协议过滤(传输层)";
+            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label2.Location = new System.Drawing.Point(350, 15);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(2, 20);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "label2";
             // 
             // checkBoxTLS
             // 
             this.checkBoxTLS.AutoSize = true;
             this.checkBoxTLS.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxTLS.Location = new System.Drawing.Point(110, 17);
+            this.checkBoxTLS.Location = new System.Drawing.Point(307, 17);
             this.checkBoxTLS.Name = "checkBoxTLS";
             this.checkBoxTLS.Size = new System.Drawing.Size(42, 16);
             this.checkBoxTLS.TabIndex = 3;
             this.checkBoxTLS.Text = "TLS";
             this.checkBoxTLS.UseVisualStyleBackColor = false;
             // 
+            // label1
+            // 
+            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label1.Location = new System.Drawing.Point(207, 15);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(2, 20);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "label1";
+            // 
             // checkBoxUDP
             // 
             this.checkBoxUDP.AutoSize = true;
             this.checkBoxUDP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxUDP.Location = new System.Drawing.Point(58, 17);
+            this.checkBoxUDP.Location = new System.Drawing.Point(259, 17);
             this.checkBoxUDP.Name = "checkBoxUDP";
             this.checkBoxUDP.Size = new System.Drawing.Size(42, 16);
             this.checkBoxUDP.TabIndex = 2;
             this.checkBoxUDP.Text = "UDP";
             this.checkBoxUDP.UseVisualStyleBackColor = false;
-            // 
-            // checkBoxTCP
-            // 
-            this.checkBoxTCP.AutoSize = true;
-            this.checkBoxTCP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxTCP.Location = new System.Drawing.Point(6, 17);
-            this.checkBoxTCP.Name = "checkBoxTCP";
-            this.checkBoxTCP.Size = new System.Drawing.Size(42, 16);
-            this.checkBoxTCP.TabIndex = 1;
-            this.checkBoxTCP.Text = "TCP";
-            this.checkBoxTCP.UseVisualStyleBackColor = false;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.checkBoxARP);
-            this.groupBox1.Controls.Add(this.checkBoxICMP);
-            this.groupBox1.Controls.Add(this.checkBoxIPv6);
-            this.groupBox1.Controls.Add(this.checkBoxIPv4);
-            this.groupBox1.Location = new System.Drawing.Point(3, 32);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(220, 41);
-            this.groupBox1.TabIndex = 19;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "协议过滤(网络层)";
             // 
             // checkBoxARP
             // 
@@ -468,6 +492,17 @@
             this.checkBoxICMP.TabIndex = 4;
             this.checkBoxICMP.Text = "ICMP";
             this.checkBoxICMP.UseVisualStyleBackColor = false;
+            // 
+            // checkBoxTCP
+            // 
+            this.checkBoxTCP.AutoSize = true;
+            this.checkBoxTCP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxTCP.Location = new System.Drawing.Point(215, 17);
+            this.checkBoxTCP.Name = "checkBoxTCP";
+            this.checkBoxTCP.Size = new System.Drawing.Size(42, 16);
+            this.checkBoxTCP.TabIndex = 1;
+            this.checkBoxTCP.Text = "TCP";
+            this.checkBoxTCP.UseVisualStyleBackColor = false;
             // 
             // checkBoxIPv6
             // 
@@ -513,50 +548,14 @@
             this.traceTCPToolStripMenuItem.Text = "TCP流追踪";
             this.traceTCPToolStripMenuItem.Click += new System.EventHandler(this.listviewMenuStripTraceTCP_Click);
             // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.radioButtonHex);
-            this.groupBox5.Controls.Add(this.radioButtonBin);
-            this.groupBox5.Location = new System.Drawing.Point(317, 79);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(160, 45);
-            this.groupBox5.TabIndex = 24;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "字节显示";
-            // 
-            // radioButtonBin
-            // 
-            this.radioButtonBin.AutoSize = true;
-            this.radioButtonBin.Location = new System.Drawing.Point(10, 20);
-            this.radioButtonBin.Name = "radioButtonBin";
-            this.radioButtonBin.Size = new System.Drawing.Size(59, 16);
-            this.radioButtonBin.TabIndex = 0;
-            this.radioButtonBin.TabStop = true;
-            this.radioButtonBin.Text = "二进制";
-            this.radioButtonBin.UseVisualStyleBackColor = true;
-            this.radioButtonBin.CheckedChanged += new System.EventHandler(this.radioButtonBin_CheckedChanged);
-            // 
-            // radioButtonHex
-            // 
-            this.radioButtonHex.AutoSize = true;
-            this.radioButtonHex.Checked = true;
-            this.radioButtonHex.Location = new System.Drawing.Point(82, 20);
-            this.radioButtonHex.Name = "radioButtonHex";
-            this.radioButtonHex.Size = new System.Drawing.Size(71, 16);
-            this.radioButtonHex.TabIndex = 1;
-            this.radioButtonHex.TabStop = true;
-            this.radioButtonHex.Text = "十六进制";
-            this.radioButtonHex.UseVisualStyleBackColor = true;
-            this.radioButtonHex.CheckedChanged += new System.EventHandler(this.radioButtonHex_CheckedChanged);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(779, 506);
+            this.ClientSize = new System.Drawing.Size(764, 506);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(795, 39);
+            this.MinimumSize = new System.Drawing.Size(780, 39);
             this.Name = "MainForm";
             this.Text = "WinSniffer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -576,17 +575,13 @@
             this.splitContainer2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.listviewMenuStrip.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -620,9 +615,7 @@
         private System.Windows.Forms.CheckBox checkBoxUDP;
         private System.Windows.Forms.CheckBox checkBoxTCP;
         private System.Windows.Forms.CheckBox checkBoxIPv4;
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox checkBoxTLS;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox checkBoxHTTP;
         private System.Windows.Forms.CheckBox checkBoxARP;
         private System.Windows.Forms.ContextMenuStrip listviewMenuStrip;
@@ -634,6 +627,8 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.RadioButton radioButtonHex;
         private System.Windows.Forms.RadioButton radioButtonBin;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }
 

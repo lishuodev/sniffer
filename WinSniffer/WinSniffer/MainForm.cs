@@ -762,12 +762,24 @@ namespace WinSniffer
         {
             if (tracePacket != null)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("id:" + tracePacket.id);
-                sb.AppendLine("time:" + tracePacket.time);
-                sb.AppendLine("sourceIP:" + tracePacket.ipv4.sourceIP.ToString());
-                sb.AppendLine("destinationIP:" + tracePacket.ipv4.destinationIP.ToString());
-                textBoxBinary.Text = sb.ToString();
+                IPAddress sourceIP = null, destinationIP = null;
+                if (tracePacket.ethernetType == EthernetType.IPv4)
+                {
+                    sourceIP = tracePacket.ipv4.sourceIP;
+                    destinationIP = tracePacket.ipv4.destinationIP;
+                }
+                else if (tracePacket.ethernetType == EthernetType.IPv6)
+                {
+                    sourceIP = tracePacket.ipv6.sourceAddress;
+                    destinationIP = tracePacket.ipv6.destinationAddress;
+                }
+
+                textBoxTrace.Text = sourceIP.ToString() + " <-> " + destinationIP.ToString();
+
+                List<LibraryParsedPacket> list = TraceIP(tracePacket);
+
+                listViewPacket.Items.Clear();
+                AppendPacketListToListView(list);
             }
         }
 
@@ -779,6 +791,102 @@ namespace WinSniffer
         private void radioButtonHex_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectIndex]);
+        }
+
+        private List<LibraryParsedPacket> TraceIP(LibraryParsedPacket target)
+        {
+            List<LibraryParsedPacket> list = new List<LibraryParsedPacket>();
+            LibraryParsedPacket packet;
+            for (int i = 0; i < id; i++)
+            {
+                if (parsedPacketDict.ContainsKey(i))
+                {
+                    packet = parsedPacketDict[i];
+                    if (packet.ethernetType != target.ethernetType) continue;
+
+                    if (packet.ethernetType == EthernetType.IPv4)
+                    {
+                        if (packet.ipv4.sourceIP.Equals(target.ipv4.sourceIP) 
+                            && packet.ipv4.destinationIP.Equals(target.ipv4.destinationIP)
+                            && packet.tcp.sourcePort.Equals(target.tcp.sourcePort) 
+                            && packet.tcp.destinationPort.Equals(target.tcp.destinationPort))
+                            list.Add(packet);
+                        else if (packet.ipv4.sourceIP.Equals(target.ipv4.destinationIP) 
+                            && packet.ipv4.destinationIP.Equals(target.ipv4.sourceIP)
+                            && packet.tcp.sourcePort.Equals(target.tcp.destinationPort)
+                            && packet.tcp.destinationPort.Equals(target.tcp.sourcePort))
+                            list.Add(packet);
+                    }
+                    else if (packet.ethernetType == EthernetType.IPv6)
+                    {
+                        if (packet.ipv6.sourceAddress.Equals(target.ipv6.sourceAddress) 
+                            && packet.ipv6.destinationAddress.Equals(target.ipv6.destinationAddress)
+                            && packet.tcp.sourcePort.Equals(target.tcp.sourcePort)
+                            && packet.tcp.destinationPort.Equals(target.tcp.destinationPort))
+                            list.Add(packet);
+                        else if (packet.ipv6.sourceAddress.Equals(target.ipv6.destinationAddress) 
+                            && packet.ipv6.destinationAddress.Equals(target.ipv6.sourceAddress)
+                            && packet.tcp.sourcePort.Equals(target.tcp.destinationPort)
+                            && packet.tcp.destinationPort.Equals(target.tcp.sourcePort))
+                            list.Add(packet);
+                    }
+                }
+            }
+            return list;
+        }
+
+        private void AppendPacketListToListView(List<LibraryParsedPacket> list)
+        {
+            ListViewItem item;
+            LibraryParsedPacket parsed;
+            for (int i = 0; i < list.Count; i++)
+            {
+                parsed = list[i];
+                item = new ListViewItem(parsed.id.ToString());
+                item.SubItems.Add(parsed.time.ToString());
+                switch (parsed.ethernetType)
+                {
+                    case EthernetType.IPv4:
+                        item.SubItems.Add(parsed.ipv4.sourceIP.ToString());
+                        item.SubItems.Add(parsed.ipv4.destinationIP.ToString());
+                        break;
+                    case EthernetType.IPv6:
+                        item.SubItems.Add(parsed.ipv6.sourceAddress.ToString());
+                        item.SubItems.Add(parsed.ipv6.destinationAddress.ToString());
+                        break;
+                    case EthernetType.Arp:
+                        item.SubItems.Add(parsed.arp.senderProtocolAddress.ToString());
+                        item.SubItems.Add(parsed.arp.targetProtocolAddress.ToString());
+                        break;
+                    default:
+                        item.SubItems.Add("");
+                        item.SubItems.Add("");
+                        break;
+                }
+                item.SubItems.Add(parsed.ethernetType.ToString());
+                item.SubItems.Add(parsed.packageLength.ToString());
+                if (parsed.ethernetType == EthernetType.IPv4)
+                {
+                    item.SubItems.Add(((ProtocolType)parsed.ipv4.protocol).ToString());
+                }
+
+                listViewPacket.Items.Add(item);
+            }
+        }
+
+        private void buttonCancelTrace_Click(object sender, EventArgs e)
+        {
+            textBoxTrace.Text = string.Empty;
+
+            listViewPacket.Items.Clear();
+
+            List<LibraryParsedPacket> list = new List<LibraryParsedPacket>();
+            for (int i = 0; i < parsedPacketDict.Count; i++)
+            {
+                if (parsedPacketDict.ContainsKey(i))
+                    list.Add(parsedPacketDict[i]);
+            }
+            AppendPacketListToListView(list);
         }
     }
 }

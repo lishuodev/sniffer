@@ -70,10 +70,36 @@ namespace WinSniffer
                         switch ((ProtocolType)ipv6Info.nextHeader)
                         {
                             case ProtocolType.Tcp:
+                                if (packet.PayloadPacket is TcpPacket tcp)
+                                {
+                                    parsed.tcp = new TCPInfo();
+                                    parsed.tcp.sourcePort = tcp.SourcePort;
+                                    parsed.tcp.destinationPort = tcp.DestinationPort;
+                                    parsed.tcp.sequenceNumber = tcp.SequenceNumber;
+                                    parsed.tcp.acknowledgementNumber = tcp.AcknowledgmentNumber;
+                                    parsed.tcp.dataOffset = tcp.DataOffset;
+                                    parsed.tcp.flags = tcp.Flags;
+                                    parsed.tcp.windowSize = tcp.WindowSize;
+                                    parsed.tcp.checksum = tcp.Checksum;
 
+                                    parsed.tcp.options = new byte[tcp.Options.Length];
+                                    Array.Copy(tcp.Options, parsed.tcp.options, tcp.Options.Length);
+                                    parsed.tcp.payload = new byte[tcp.PayloadData.Length];
+                                    Array.Copy(tcp.PayloadData, parsed.tcp.payload, tcp.PayloadData.Length);
+
+                                }
                                 break;
                             case ProtocolType.Udp:
-
+                                if (packet.PayloadPacket is UdpPacket udp)
+                                {
+                                    parsed.udp = new UDPInfo();
+                                    parsed.udp.sourcePort = udp.SourcePort;
+                                    parsed.udp.destinationPort = udp.DestinationPort;
+                                    parsed.udp.length = udp.Length;
+                                    parsed.udp.checksum = udp.Checksum;
+                                    parsed.udp.payload = new byte[udp.PayloadData.Length];
+                                    Array.Copy(udp.PayloadData, parsed.udp.payload, udp.PayloadData.Length);
+                                }
                                 break;
                             case ProtocolType.IcmpV6:
 
