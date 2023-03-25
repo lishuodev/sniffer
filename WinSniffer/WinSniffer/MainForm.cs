@@ -353,6 +353,7 @@ namespace WinSniffer
             }
         }
 
+        // ▶▼▲◀
         // 选中一个数据包
         private void OnSelectPacketChanged(object sender)
         {
@@ -369,10 +370,43 @@ namespace WinSniffer
                     listBoxParse.Items.Clear();
                     ParsedPacket pp = parsedPacketDict[selectFrame];
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append(string.Format("Frame {0}: {1} bytes ({2} bits)", selectFrame, pp.length, pp.length * 8));
-                    listBoxParse.Items.Add(sb.ToString());
+                    string s1 = string.Format("▶ Frame {0}: {1} bytes ({2} bits) on interface {3}", selectFrame, pp.length, pp.length * 8, device.Name);
+                    listBoxParse.Items.Add(s1);
 
+                    string s2 = string.Format("▶ {0}, Src: ({1}), Dst: ({2}), ", pp.linkLayerType, BitConverter.ToString(pp.sourceMac.GetAddressBytes()).Replace("-", ":"), BitConverter.ToString(pp.destinationMac.GetAddressBytes()).Replace("-", ":"), pp.ethernetType);
+                    listBoxParse.Items.Add(s2);
+
+                    // Type:{3}(0x{4})
+                    // pp.ethernetType.ToString("X").PadLeft(4)
+
+                    string s3 = string.Format("▶ {0}, Src: {1}, Dst: {2}", pp.ethernetType, pp.sourceAddress.ToString(), pp.destinationAddress.ToString());
+                    listBoxParse.Items.Add(s3);
+
+                    switch (pp.transportType)
+                    {
+                        case ProtocolType.Tcp:
+                            string stcp = string.Format("▶ {0}, Src Port: {1}, Dst Prot: {2}, Seq: {3}, Len: {4}", pp.transportType, pp.sourcePort, pp.destinationPort, pp.tcpPacket.SequenceNumber, pp.tcpPacket.AcknowledgmentNumber);
+                            listBoxParse.Items.Add(stcp);
+                            break;
+                        case ProtocolType.Udp:
+                            string sudp = string.Format("▶ {0}, Src Port: {1}, Dst Prot: {2}", pp.transportType, pp.sourcePort, pp.destinationPort);
+                            listBoxParse.Items.Add(sudp);
+                            break;
+                        case ProtocolType.Icmp:
+                        case ProtocolType.IcmpV6:
+                            string sicmp = string.Format("▶ {0}", pp.transportType);
+                            listBoxParse.Items.Add(sicmp);
+                            break;
+                    }
+
+                    if (pp.transportType == ProtocolType.Tcp)
+                    {
+                        if (pp.sourcePort == 443) // TLS
+                        {
+                            string stls = string.Format("Transport Layer Security");
+                            listBoxParse.Items.Add(stls);
+                        }
+                    }
 
                     listBoxParse.Items.Add("--------------------");
                     listBoxParse.Items.Add("Data Link Layer");

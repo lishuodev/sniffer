@@ -206,7 +206,7 @@
             // 
             // columnTransport
             // 
-            this.columnTransport.Text = "TransportType";
+            this.columnTransport.Text = "Protocol";
             this.columnTransport.Width = 100;
             // 
             // columnHeader8
@@ -336,7 +336,7 @@
             // 
             // columnHeader7
             // 
-            this.columnHeader7.Text = "TransportType";
+            this.columnHeader7.Text = "Protocol";
             this.columnHeader7.Width = 100;
             // 
             // columnHeader10
