@@ -33,20 +33,31 @@
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonStart = new System.Windows.Forms.Button();
             this.listViewPacket = new System.Windows.Forms.ListView();
-            this.columnNo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnFrame = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnSrc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnDst = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnEtherType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnLength = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnProtocol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnEtherType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnTransport = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.comboBoxDeviceList = new System.Windows.Forms.ComboBox();
             this.buttonClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.textBoxBinary = new System.Windows.Forms.TextBox();
+            this.listViewTrace = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.listBoxParse = new System.Windows.Forms.ListBox();
+            this.textBoxBinary = new System.Windows.Forms.TextBox();
             this.listBoxParse2 = new System.Windows.Forms.ListBox();
             this.checkBoxPromiscuous = new System.Windows.Forms.CheckBox();
             this.checkBoxAutoScroll = new System.Windows.Forms.CheckBox();
@@ -71,6 +82,7 @@
             this.listviewMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.流追踪ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traceTCPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.traceUDPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -128,65 +140,76 @@
             this.listViewPacket.Activation = System.Windows.Forms.ItemActivation.OneClick;
             this.listViewPacket.AutoArrange = false;
             this.listViewPacket.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnNo,
+            this.columnFrame,
             this.columnTime,
             this.columnSrc,
             this.columnDst,
-            this.columnEtherType,
             this.columnLength,
-            this.columnProtocol});
+            this.columnEtherType,
+            this.columnTransport,
+            this.columnHeader8,
+            this.columnHeader9});
             this.listViewPacket.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewPacket.HideSelection = false;
             this.listViewPacket.Location = new System.Drawing.Point(0, 0);
             this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(392, 183);
+            this.listViewPacket.Size = new System.Drawing.Size(392, 195);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
             this.listViewPacket.SelectedIndexChanged += new System.EventHandler(this.listViewPacket_SelectedIndexChanged);
             this.listViewPacket.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewPacket_MouseClick);
             // 
-            // columnNo
+            // columnFrame
             // 
-            this.columnNo.Text = "No.";
-            this.columnNo.Width = 50;
+            this.columnFrame.Text = "No.";
+            this.columnFrame.Width = 50;
             // 
             // columnTime
             // 
             this.columnTime.Text = "Time";
-            this.columnTime.Width = 100;
+            this.columnTime.Width = 50;
             // 
             // columnSrc
             // 
-            this.columnSrc.Text = "Source";
-            this.columnSrc.Width = 150;
+            this.columnSrc.Text = "Source IP";
+            this.columnSrc.Width = 100;
             // 
             // columnDst
             // 
-            this.columnDst.Text = "Destination";
-            this.columnDst.Width = 150;
-            // 
-            // columnEtherType
-            // 
-            this.columnEtherType.Text = "EtherType";
-            this.columnEtherType.Width = 100;
+            this.columnDst.Text = "Destination IP";
+            this.columnDst.Width = 100;
             // 
             // columnLength
             // 
             this.columnLength.Text = "Length";
-            this.columnLength.Width = 100;
+            this.columnLength.Width = 50;
             // 
-            // columnProtocol
+            // columnEtherType
             // 
-            this.columnProtocol.Text = "Protocol";
-            this.columnProtocol.Width = 100;
+            this.columnEtherType.Text = "EthernetType";
+            this.columnEtherType.Width = 100;
+            // 
+            // columnTransport
+            // 
+            this.columnTransport.Text = "TransportType";
+            this.columnTransport.Width = 100;
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Source Port";
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Destination Port";
             // 
             // comboBoxDeviceList
             // 
             this.comboBoxDeviceList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxDeviceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDeviceList.FormattingEnabled = true;
             this.comboBoxDeviceList.Location = new System.Drawing.Point(61, 6);
             this.comboBoxDeviceList.Name = "comboBoxDeviceList";
@@ -220,8 +243,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(758, 376);
-            this.splitContainer1.SplitterDistance = 183;
+            this.splitContainer1.Size = new System.Drawing.Size(758, 402);
+            this.splitContainer1.SplitterDistance = 195;
             this.splitContainer1.TabIndex = 14;
             // 
             // splitContainer3
@@ -237,23 +260,80 @@
             // 
             // splitContainer3.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.textBoxBinary);
-            this.splitContainer3.Size = new System.Drawing.Size(758, 183);
+            this.splitContainer3.Panel2.Controls.Add(this.listViewTrace);
+            this.splitContainer3.Size = new System.Drawing.Size(758, 195);
             this.splitContainer3.SplitterDistance = 392;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 12;
             // 
-            // textBoxBinary
+            // listViewTrace
             // 
-            this.textBoxBinary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxBinary.Location = new System.Drawing.Point(0, 0);
-            this.textBoxBinary.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxBinary.Multiline = true;
-            this.textBoxBinary.Name = "textBoxBinary";
-            this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxBinary.Size = new System.Drawing.Size(364, 183);
-            this.textBoxBinary.TabIndex = 0;
-            this.textBoxBinary.WordWrap = false;
+            this.listViewTrace.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listViewTrace.AutoArrange = false;
+            this.listViewTrace.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6,
+            this.columnHeader7,
+            this.columnHeader10,
+            this.columnHeader11});
+            this.listViewTrace.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewTrace.HideSelection = false;
+            this.listViewTrace.Location = new System.Drawing.Point(0, 0);
+            this.listViewTrace.Margin = new System.Windows.Forms.Padding(2);
+            this.listViewTrace.MultiSelect = false;
+            this.listViewTrace.Name = "listViewTrace";
+            this.listViewTrace.Size = new System.Drawing.Size(364, 195);
+            this.listViewTrace.TabIndex = 12;
+            this.listViewTrace.UseCompatibleStateImageBehavior = false;
+            this.listViewTrace.View = System.Windows.Forms.View.Details;
+            this.listViewTrace.SelectedIndexChanged += new System.EventHandler(this.listViewTrace_SelectedIndexChanged);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "No.";
+            this.columnHeader1.Width = 50;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Time";
+            this.columnHeader2.Width = 50;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Source IP";
+            this.columnHeader3.Width = 100;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Destination IP";
+            this.columnHeader4.Width = 100;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Length";
+            this.columnHeader5.Width = 50;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "EthernetType";
+            this.columnHeader6.Width = 100;
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "TransportType";
+            this.columnHeader7.Width = 100;
+            // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "Source Port";
+            // 
+            // columnHeader11
+            // 
+            this.columnHeader11.Text = "Destination Port";
             // 
             // splitContainer2
             // 
@@ -263,35 +343,37 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.listBoxParse);
+            this.splitContainer2.Panel1.Controls.Add(this.textBoxBinary);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.listBoxParse2);
-            this.splitContainer2.Size = new System.Drawing.Size(758, 189);
+            this.splitContainer2.Size = new System.Drawing.Size(758, 203);
             this.splitContainer2.SplitterDistance = 392;
             this.splitContainer2.TabIndex = 0;
             // 
-            // listBoxParse
+            // textBoxBinary
             // 
-            this.listBoxParse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxParse.FormattingEnabled = true;
-            this.listBoxParse.HorizontalScrollbar = true;
-            this.listBoxParse.ItemHeight = 12;
-            this.listBoxParse.Location = new System.Drawing.Point(0, 0);
-            this.listBoxParse.Margin = new System.Windows.Forms.Padding(2);
-            this.listBoxParse.Name = "listBoxParse";
-            this.listBoxParse.Size = new System.Drawing.Size(392, 189);
-            this.listBoxParse.TabIndex = 0;
+            this.textBoxBinary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxBinary.Location = new System.Drawing.Point(0, 0);
+            this.textBoxBinary.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxBinary.Multiline = true;
+            this.textBoxBinary.Name = "textBoxBinary";
+            this.textBoxBinary.ReadOnly = true;
+            this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxBinary.Size = new System.Drawing.Size(392, 203);
+            this.textBoxBinary.TabIndex = 0;
+            this.textBoxBinary.WordWrap = false;
             // 
             // listBoxParse2
             // 
             this.listBoxParse2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxParse2.FormattingEnabled = true;
+            this.listBoxParse2.HorizontalScrollbar = true;
             this.listBoxParse2.ItemHeight = 12;
             this.listBoxParse2.Location = new System.Drawing.Point(0, 0);
             this.listBoxParse2.Name = "listBoxParse2";
-            this.listBoxParse2.Size = new System.Drawing.Size(362, 189);
+            this.listBoxParse2.Size = new System.Drawing.Size(362, 203);
             this.listBoxParse2.TabIndex = 0;
             // 
             // checkBoxPromiscuous
@@ -334,7 +416,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(764, 506);
+            this.panel1.Size = new System.Drawing.Size(764, 532);
             this.panel1.TabIndex = 19;
             // 
             // groupBox5
@@ -395,9 +477,9 @@
             // 
             // textBoxTrace
             // 
-            this.textBoxTrace.Enabled = false;
             this.textBoxTrace.Location = new System.Drawing.Point(6, 16);
             this.textBoxTrace.Name = "textBoxTrace";
+            this.textBoxTrace.ReadOnly = true;
             this.textBoxTrace.Size = new System.Drawing.Size(273, 21);
             this.textBoxTrace.TabIndex = 0;
             // 
@@ -536,23 +618,31 @@
             // 流追踪ToolStripMenuItem
             // 
             this.流追踪ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.traceTCPToolStripMenuItem});
+            this.traceTCPToolStripMenuItem,
+            this.traceUDPToolStripMenuItem});
             this.流追踪ToolStripMenuItem.Name = "流追踪ToolStripMenuItem";
             this.流追踪ToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
-            this.流追踪ToolStripMenuItem.Text = "流追踪";
+            this.流追踪ToolStripMenuItem.Text = "追踪流";
             // 
             // traceTCPToolStripMenuItem
             // 
             this.traceTCPToolStripMenuItem.Name = "traceTCPToolStripMenuItem";
-            this.traceTCPToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.traceTCPToolStripMenuItem.Text = "TCP流追踪";
-            this.traceTCPToolStripMenuItem.Click += new System.EventHandler(this.listviewMenuStripTraceTCP_Click);
+            this.traceTCPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.traceTCPToolStripMenuItem.Text = "TCP流";
+            this.traceTCPToolStripMenuItem.Click += new System.EventHandler(this.traceTCPToolStripMenuItem_Click);
+            // 
+            // traceUDPToolStripMenuItem
+            // 
+            this.traceUDPToolStripMenuItem.Name = "traceUDPToolStripMenuItem";
+            this.traceUDPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.traceUDPToolStripMenuItem.Text = "UDP流";
+            this.traceUDPToolStripMenuItem.Click += new System.EventHandler(this.traceUDPToolStripMenuItem_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(764, 506);
+            this.ClientSize = new System.Drawing.Size(764, 532);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(780, 39);
@@ -566,10 +656,10 @@
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel2.ResumeLayout(false);
-            this.splitContainer3.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -591,16 +681,15 @@
         private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.ListView listViewPacket;
-        private System.Windows.Forms.ColumnHeader columnNo;
+        private System.Windows.Forms.ColumnHeader columnFrame;
         private System.Windows.Forms.ColumnHeader columnTime;
         private System.Windows.Forms.ColumnHeader columnSrc;
         private System.Windows.Forms.ColumnHeader columnDst;
         private System.Windows.Forms.ColumnHeader columnEtherType;
-        private System.Windows.Forms.ColumnHeader columnProtocol;
+        private System.Windows.Forms.ColumnHeader columnTransport;
         private System.Windows.Forms.ComboBox comboBoxDeviceList;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox listBoxParse;
         private System.Windows.Forms.CheckBox checkBoxPromiscuous;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckBox checkBoxAutoScroll;
@@ -629,6 +718,19 @@
         private System.Windows.Forms.RadioButton radioButtonBin;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListView listViewTrace;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.ColumnHeader columnHeader10;
+        private System.Windows.Forms.ColumnHeader columnHeader11;
+        private System.Windows.Forms.ToolStripMenuItem traceUDPToolStripMenuItem;
     }
 }
 

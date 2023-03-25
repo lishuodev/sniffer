@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WinSniffer
+{
+    public partial class TraceForm : Form
+    {
+        public TraceForm()
+        {
+            InitializeComponent();
+        }
+
+    }
+}
