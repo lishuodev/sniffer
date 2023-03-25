@@ -17,160 +17,6 @@ namespace WinSniffer
 {
     public static class NetParser
     {
-        // 借助PacketDotNet库解析数据包
-        //public static ParsedPacket LibraryParsePacket(int frame, RawCapture raw)
-        //{
-        //    ParsedPacket parsed = new ParsedPacket();
-        //    parsed.frame = frame;
-        //    parsed.timeval = raw.Timeval;
-        //    Packet packet = Packet.ParsePacket(raw.LinkLayerType, raw.Data);
-        //    parsed.length = raw.PacketLength;
-        //    if (packet is EthernetPacket ethernet)
-        //    {
-        //        parsed.sourceMac = ethernet.SourceHardwareAddress;
-        //        parsed.destinationMac = ethernet.DestinationHardwareAddress;
-        //        parsed.ethernetType = ethernet.Type;
-
-        //        switch (parsed.ethernetType)
-        //        {
-        //            case EthernetType.IPv4:
-        //                IPv4Info ipv4Info = new IPv4Info();
-        //                parsed.ipv4Info = ipv4Info;
-        //                IPv4Packet ipv4 = packet.Extract<IPv4Packet>();
-        //                ipv4Info.version = (int)ipv4.Version;
-        //                ipv4Info.headerLength = ipv4.HeaderLength;
-        //                ipv4Info.ToS = ipv4.TypeOfService;
-        //                ipv4Info.totalLength = ipv4.TotalLength;
-        //                ipv4Info.identification = ipv4.Id;
-        //                ipv4Info.flags = ipv4.FragmentFlags;
-        //                ipv4Info.fragmentOffset = ipv4.FragmentOffset;
-        //                ipv4Info.TTL = ipv4.TimeToLive;
-        //                ipv4Info.protocol = (byte)ipv4.Protocol;
-        //                ipv4Info.headerChecksum = ipv4.Checksum;
-        //                ipv4Info.sourceIP = ipv4.SourceAddress;
-        //                ipv4Info.destinationIP = ipv4.DestinationAddress;
-        //                break;
-        //            case EthernetType.IPv6:
-        //                IPv6Info ipv6Info = new IPv6Info();
-        //                parsed.ipv6Info = ipv6Info;
-        //                IPv6Packet ipv6 = packet.Extract<IPv6Packet>();
-        //                ipv6Info.version = (int)ipv6.Version;
-        //                ipv6Info.trafficClass = ipv6.TrafficClass;
-        //                ipv6Info.flowLabel = ipv6.FlowLabel;
-        //                ipv6Info.payloadLength = ipv6.PayloadLength;
-        //                ipv6Info.nextHeader = (byte)ipv6.NextHeader;
-        //                ipv6Info.hopLimit = ipv6.HopLimit;
-        //                ipv6Info.sourceAddress = ipv6.SourceAddress;
-        //                ipv6Info.destinationAddress = ipv6.DestinationAddress;
-        //                if (ipv6.PayloadData != null)
-        //                {
-        //                    ipv6Info.payload = new byte[ipv6.PayloadData.Length];
-        //                    Array.Copy(ipv6.PayloadData, ipv6Info.payload, ipv6.PayloadData.Length);
-        //                }
-        //                switch ((ProtocolType)ipv6Info.nextHeader)
-        //                {
-        //                    case ProtocolType.Tcp:
-        //                        if (packet.PayloadPacket is TcpPacket tcp)
-        //                        {
-        //                            parsed.tcpInfo = new TCPInfo();
-        //                            parsed.tcpInfo.sourcePort = tcp.SourcePort;
-        //                            parsed.tcpInfo.destinationPort = tcp.DestinationPort;
-        //                            parsed.tcpInfo.sequenceNumber = tcp.SequenceNumber;
-        //                            parsed.tcpInfo.acknowledgementNumber = tcp.AcknowledgmentNumber;
-        //                            parsed.tcpInfo.dataOffset = tcp.DataOffset;
-        //                            parsed.tcpInfo.flags = tcp.Flags;
-        //                            parsed.tcpInfo.windowSize = tcp.WindowSize;
-        //                            parsed.tcpInfo.checksum = tcp.Checksum;
-
-        //                            parsed.tcpInfo.options = new byte[tcp.Options.Length];
-        //                            Array.Copy(tcp.Options, parsed.tcpInfo.options, tcp.Options.Length);
-        //                            parsed.tcpInfo.payload = new byte[tcp.PayloadData.Length];
-        //                            Array.Copy(tcp.PayloadData, parsed.tcpInfo.payload, tcp.PayloadData.Length);
-
-        //                        }
-        //                        break;
-        //                    case ProtocolType.Udp:
-        //                        if (packet.PayloadPacket is UdpPacket udp)
-        //                        {
-        //                            parsed.udpInfo = new UDPInfo();
-        //                            parsed.udpInfo.sourcePort = udp.SourcePort;
-        //                            parsed.udpInfo.destinationPort = udp.DestinationPort;
-        //                            parsed.udpInfo.length = udp.Length;
-        //                            parsed.udpInfo.checksum = udp.Checksum;
-        //                            parsed.udpInfo.payload = new byte[udp.PayloadData.Length];
-        //                            Array.Copy(udp.PayloadData, parsed.udpInfo.payload, udp.PayloadData.Length);
-        //                        }
-        //                        break;
-        //                    case ProtocolType.IcmpV6:
-
-        //                        break;
-        //                    default:
-        //                        break;
-        //                }
-        //                break;
-        //            case EthernetType.Arp:
-        //                ARPInfo arpInfo = new ARPInfo();
-        //                parsed.arpInfo = arpInfo;
-        //                var arp = packet.Extract<ArpPacket>();
-        //                arpInfo.hardwareAddressType = (int)arp.HardwareAddressType;
-        //                arpInfo.protocolAddressType = (int)arp.ProtocolAddressType;
-        //                arpInfo.hardwareAddressLength = arp.HardwareAddressLength;
-        //                arpInfo.protocolAddressLength = arp.ProtocolAddressLength;
-        //                arpInfo.opCode = (int)arp.Operation;
-        //                arpInfo.senderHardwareAddress = arp.SenderHardwareAddress;
-        //                arpInfo.senderProtocolAddress = arp.SenderProtocolAddress;
-        //                arpInfo.targetHardwareAddress = arp.TargetHardwareAddress;
-        //                arpInfo.targetProtocolAddress = arp.TargetProtocolAddress;
-        //                break;
-        //            default:
-        //                break;
-        //        }
-
-        //        if (EthernetType.IPv4 == parsed.ethernetType)
-        //        {
-        //            parsed.transportType = (ProtocolType)parsed.ipv4Info.protocol;
-        //            switch (parsed.transportType)
-        //            {
-        //                case ProtocolType.Tcp:
-        //                    TCPInfo tcpInfo = new TCPInfo();
-        //                    parsed.tcpInfo = tcpInfo;
-        //                    var tcp = packet.Extract<TcpPacket>();
-        //                    tcpInfo.sourcePort = tcp.SourcePort;
-        //                    tcpInfo.destinationPort = tcp.DestinationPort;
-        //                    tcpInfo.sequenceNumber = tcp.SequenceNumber;
-        //                    tcpInfo.acknowledgementNumber = tcp.AcknowledgmentNumber;
-        //                    tcpInfo.dataOffset = tcp.DataOffset;
-        //                    tcpInfo.flags = tcp.Flags;
-        //                    tcpInfo.windowSize = tcp.WindowSize;
-        //                    tcpInfo.checksum = tcp.Checksum;
-        //                    tcpInfo.urgentPointer = tcp.UrgentPointer;
-        //                    tcpInfo.options = new byte[tcp.Options.Length];
-        //                    Array.Copy(tcp.Options, tcpInfo.options, tcp.Options.Length);
-        //                    tcpInfo.payload = new byte[tcp.PayloadData.Length];
-        //                    Array.Copy(tcp.PayloadData, tcpInfo.payload, tcp.PayloadData.Length);
-
-        //                    break;
-        //                case ProtocolType.Udp:
-        //                    UDPInfo udpInfo = new UDPInfo();
-        //                    parsed.udpInfo = udpInfo;
-        //                    var udp = packet.Extract<UdpPacket>();
-        //                    udpInfo.sourcePort = udp.SourcePort;
-        //                    udpInfo.destinationPort = udp.DestinationPort;
-        //                    udpInfo.length = udp.Length;
-        //                    udpInfo.checksum = udp.Checksum;
-        //                    udpInfo.payload = new byte[udp.PayloadData.Length];
-        //                    Array.Copy(udp.PayloadData, udpInfo.payload, udp.PayloadData.Length);
-                            
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //        }
-
-        //    }
-        //    return parsed;
-        //}
-
         public static ParsedPacket ParsePacket(int frame, RawCapture raw)
         {
             ParsedPacket pp = new ParsedPacket
@@ -195,18 +41,29 @@ namespace WinSniffer
                 {
                     switch (pp.ethernetType)
                     {
-                        case EthernetType.IPv4: pp.ipv4Packet = (IPv4Packet)ip; break;
-                        case EthernetType.IPv6: pp.ipv6Packet = (IPv6Packet)ip; break;
+                        case EthernetType.IPv4: 
+                            pp.ipv4Packet = (IPv4Packet)ip;
+                            pp.sourceAddress = pp.ipv4Packet.SourceAddress;
+                            pp.destinationAddress = pp.ipv4Packet.DestinationAddress;
+                            break;
+                        case EthernetType.IPv6: 
+                            pp.ipv6Packet = (IPv6Packet)ip;
+                            pp.sourceAddress = pp.ipv6Packet.SourceAddress;
+                            pp.destinationAddress = pp.ipv6Packet.DestinationAddress;
+                            break;
                     }
 
                     switch (ip.Protocol)
                     {
                         case ProtocolType.Tcp:
                             TcpPacket tcp = pp.packet.Extract<TcpPacket>();
+                            
                             if (tcp != null)
                             {
                                 pp.transportType = ProtocolType.Tcp;
                                 pp.tcpPacket = tcp;
+                                pp.sourcePort = pp.tcpPacket.SourcePort;
+                                pp.destinationPort = pp.tcpPacket.DestinationPort;
                                 if (pp.tcpPacket.HasPayloadPacket)
                                 {
                                     Packet p1 = pp.tcpPacket.PayloadPacket;
@@ -240,6 +97,8 @@ namespace WinSniffer
                             {
                                 pp.transportType = ProtocolType.Udp;
                                 pp.udpPacket = udp;
+                                pp.sourcePort = pp.udpPacket.SourcePort;
+                                pp.destinationPort = pp.udpPacket.DestinationPort;
                                 if (pp.udpPacket.HasPayloadPacket)
                                 {
                                     Packet p1 = pp.udpPacket.PayloadPacket;
@@ -370,17 +229,17 @@ namespace WinSniffer
         public PhysicalAddress sourceMac;       // 源物理地址
         public PhysicalAddress destinationMac;  // 目标物理地址
         public EthernetType ethernetType;       // 网络层协议
-        //public IPv4Info ipv4Info;
-        //public IPv6Info ipv6Info;
-        //public ARPInfo arpInfo;
 
         // 传输层
         public ProtocolType transportType;      // 传输层协议
         public TcpPacket tcpPacket;
         public UdpPacket udpPacket;
-        //public TCPInfo tcpInfo;
-        //public UDPInfo udpInfo;
 
         public List<Packet> payloadPackets;
+
+        public IPAddress sourceAddress;
+        public IPAddress destinationAddress;
+        public ushort sourcePort;
+        public ushort destinationPort;
     }
 }

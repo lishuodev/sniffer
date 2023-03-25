@@ -17,16 +17,16 @@ namespace WinSniffer.ProtocolAnalyzer
 
     public static class EthernetAnalyzer
     {
-        public static EthernetInfo Analyze(byte[] packet)
+        public static EthernetInfo Analyze(byte[] data)
         {
             EthernetInfo info = new EthernetInfo();
-            info.destinationMac = new PhysicalAddress(packet.Take(6).ToArray());
-            info.sourceMac = new PhysicalAddress(packet.Skip(6).Take(6).ToArray());
-            info.etherType = (ushort)((packet[12] << 8) | packet[13]);
+            info.destinationMac = new PhysicalAddress(data.Take(6).ToArray());
+            info.sourceMac = new PhysicalAddress(data.Skip(6).Take(6).ToArray());
+            info.etherType = (ushort)((data[12] << 8) | data[13]);
             return info;
         }
 
-        public static string PrintBin(byte[] packet)
+        public static string PrintBin(byte[] data)
         {
             string space = " ";
             string space3 = "   ";
@@ -34,10 +34,10 @@ namespace WinSniffer.ProtocolAnalyzer
             StringBuilder asc = new StringBuilder();
             byte b = 0x00;
 
-            for (int i = 0; i < packet.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 // 准备数据
-                b = packet[i];
+                b = data[i];
                 asc.Append((b >= 33 && b <= 126) ? Encoding.ASCII.GetString(new byte[1] { b }) : ".");
 
                 // 段号
@@ -61,7 +61,7 @@ namespace WinSniffer.ProtocolAnalyzer
                 }
             }
             // 最后一行补完
-            int extra = 8 - packet.Length % 8;
+            int extra = 8 - data.Length % 8;
             for (int i = 0; i < extra * 9; i++)
             {
                 // 二进制制数(空)
@@ -78,17 +78,17 @@ namespace WinSniffer.ProtocolAnalyzer
             return sb.ToString();
         }
 
-        public static string PrintHex(byte[] packet)
+        public static string PrintHex(byte[] data)
         {
             string space = " ";
             string space3 = "   ";
             StringBuilder sb = new StringBuilder();
             StringBuilder asc = new StringBuilder();
             byte b = 0x00;
-            for (int i = 0; i < packet.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 // 准备数据
-                b = packet[i];
+                b = data[i];
                 asc.Append((b >= 33 && b <= 126) ? Encoding.ASCII.GetString(new byte[1] { b }) : ".");
                 
                 // 段号
@@ -114,7 +114,7 @@ namespace WinSniffer.ProtocolAnalyzer
                 }
             }
             // 最后一行补完
-            int extra = 16 - packet.Length % 16;
+            int extra = 16 - data.Length % 16;
             for (int i = 0; i < extra; i++)
             {
                 // 十六进制数(空)
@@ -130,5 +130,55 @@ namespace WinSniffer.ProtocolAnalyzer
 
             return sb.ToString();
         }
+
+        public static string PureBin(byte[] data)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                // 准备数据
+                byte b = data[i];
+
+                // 二进制数
+                sb.Append(Convert.ToString(b, 2).PadLeft(8, '0'));
+                //sb.Append(space);
+
+            }
+            sb.AppendLine();
+
+            return sb.ToString();
+        }
+
+        public static string PureHex(byte[] data)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                // 准备数据
+                byte b = data[i];
+
+                // 十六进制数
+                sb.Append(b.ToString("X").PadLeft(2, '0'));
+            }
+            sb.AppendLine();
+
+            return sb.ToString();
+        }
+
+        public static string PureASCII(byte[] data)
+        {
+            StringBuilder asc = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                // 准备数据
+                byte b = data[i];
+                asc.Append((b >= 33 && b <= 126) ? Encoding.ASCII.GetString(new byte[1] { b }) : ".");
+
+            }
+            asc.AppendLine();
+
+            return asc.ToString();
+        }
+ 
     }
 }

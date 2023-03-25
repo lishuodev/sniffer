@@ -58,16 +58,13 @@
             this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.textBoxBinary = new System.Windows.Forms.TextBox();
-            this.listBoxParse2 = new System.Windows.Forms.ListBox();
+            this.listBoxParse = new System.Windows.Forms.ListBox();
             this.checkBoxPromiscuous = new System.Windows.Forms.CheckBox();
             this.checkBoxAutoScroll = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.radioButtonHex = new System.Windows.Forms.RadioButton();
             this.radioButtonBin = new System.Windows.Forms.RadioButton();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.buttonCancelTrace = new System.Windows.Forms.Button();
-            this.textBoxTrace = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.checkBoxHTTP = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -97,7 +94,6 @@
             this.splitContainer2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.listviewMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -115,10 +111,11 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(658, 63);
+            this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonStop.Location = new System.Drawing.Point(638, 6);
             this.buttonStop.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(100, 23);
+            this.buttonStop.Size = new System.Drawing.Size(40, 40);
             this.buttonStop.TabIndex = 6;
             this.buttonStop.Text = "停止";
             this.buttonStop.UseVisualStyleBackColor = true;
@@ -126,10 +123,11 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(658, 36);
+            this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonStart.Location = new System.Drawing.Point(594, 6);
             this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(100, 23);
+            this.buttonStart.Size = new System.Drawing.Size(40, 40);
             this.buttonStart.TabIndex = 7;
             this.buttonStart.Text = "开始";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -155,7 +153,7 @@
             this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(392, 195);
+            this.listViewPacket.Size = new System.Drawing.Size(350, 113);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
@@ -213,15 +211,16 @@
             this.comboBoxDeviceList.FormattingEnabled = true;
             this.comboBoxDeviceList.Location = new System.Drawing.Point(61, 6);
             this.comboBoxDeviceList.Name = "comboBoxDeviceList";
-            this.comboBoxDeviceList.Size = new System.Drawing.Size(697, 20);
+            this.comboBoxDeviceList.Size = new System.Drawing.Size(528, 20);
             this.comboBoxDeviceList.TabIndex = 12;
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(658, 90);
+            this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClear.Location = new System.Drawing.Point(638, 50);
             this.buttonClear.Margin = new System.Windows.Forms.Padding(2);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(100, 23);
+            this.buttonClear.Size = new System.Drawing.Size(40, 40);
             this.buttonClear.TabIndex = 13;
             this.buttonClear.Text = "清空";
             this.buttonClear.UseVisualStyleBackColor = true;
@@ -232,7 +231,7 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 130);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 125);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -243,8 +242,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(758, 402);
-            this.splitContainer1.SplitterDistance = 195;
+            this.splitContainer1.Size = new System.Drawing.Size(678, 236);
+            this.splitContainer1.SplitterDistance = 113;
             this.splitContainer1.TabIndex = 14;
             // 
             // splitContainer3
@@ -261,8 +260,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.listViewTrace);
-            this.splitContainer3.Size = new System.Drawing.Size(758, 195);
-            this.splitContainer3.SplitterDistance = 392;
+            this.splitContainer3.Size = new System.Drawing.Size(678, 113);
+            this.splitContainer3.SplitterDistance = 350;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 12;
             // 
@@ -286,7 +285,7 @@
             this.listViewTrace.Margin = new System.Windows.Forms.Padding(2);
             this.listViewTrace.MultiSelect = false;
             this.listViewTrace.Name = "listViewTrace";
-            this.listViewTrace.Size = new System.Drawing.Size(364, 195);
+            this.listViewTrace.Size = new System.Drawing.Size(326, 113);
             this.listViewTrace.TabIndex = 12;
             this.listViewTrace.UseCompatibleStateImageBehavior = false;
             this.listViewTrace.View = System.Windows.Forms.View.Details;
@@ -347,9 +346,9 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.listBoxParse2);
-            this.splitContainer2.Size = new System.Drawing.Size(758, 203);
-            this.splitContainer2.SplitterDistance = 392;
+            this.splitContainer2.Panel2.Controls.Add(this.listBoxParse);
+            this.splitContainer2.Size = new System.Drawing.Size(678, 119);
+            this.splitContainer2.SplitterDistance = 350;
             this.splitContainer2.TabIndex = 0;
             // 
             // textBoxBinary
@@ -361,27 +360,27 @@
             this.textBoxBinary.Name = "textBoxBinary";
             this.textBoxBinary.ReadOnly = true;
             this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxBinary.Size = new System.Drawing.Size(392, 203);
+            this.textBoxBinary.Size = new System.Drawing.Size(350, 119);
             this.textBoxBinary.TabIndex = 0;
             this.textBoxBinary.WordWrap = false;
             // 
-            // listBoxParse2
+            // listBoxParse
             // 
-            this.listBoxParse2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxParse2.FormattingEnabled = true;
-            this.listBoxParse2.HorizontalScrollbar = true;
-            this.listBoxParse2.ItemHeight = 12;
-            this.listBoxParse2.Location = new System.Drawing.Point(0, 0);
-            this.listBoxParse2.Name = "listBoxParse2";
-            this.listBoxParse2.Size = new System.Drawing.Size(362, 203);
-            this.listBoxParse2.TabIndex = 0;
+            this.listBoxParse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxParse.FormattingEnabled = true;
+            this.listBoxParse.HorizontalScrollbar = true;
+            this.listBoxParse.ItemHeight = 12;
+            this.listBoxParse.Location = new System.Drawing.Point(0, 0);
+            this.listBoxParse.Name = "listBoxParse";
+            this.listBoxParse.Size = new System.Drawing.Size(324, 119);
+            this.listBoxParse.TabIndex = 0;
             // 
             // checkBoxPromiscuous
             // 
             this.checkBoxPromiscuous.AutoSize = true;
             this.checkBoxPromiscuous.Checked = true;
             this.checkBoxPromiscuous.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxPromiscuous.Location = new System.Drawing.Point(583, 40);
+            this.checkBoxPromiscuous.Location = new System.Drawing.Point(507, 39);
             this.checkBoxPromiscuous.Name = "checkBoxPromiscuous";
             this.checkBoxPromiscuous.Size = new System.Drawing.Size(72, 16);
             this.checkBoxPromiscuous.TabIndex = 15;
@@ -393,7 +392,7 @@
             this.checkBoxAutoScroll.AutoSize = true;
             this.checkBoxAutoScroll.Checked = true;
             this.checkBoxAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAutoScroll.Location = new System.Drawing.Point(583, 67);
+            this.checkBoxAutoScroll.Location = new System.Drawing.Point(507, 61);
             this.checkBoxAutoScroll.Name = "checkBoxAutoScroll";
             this.checkBoxAutoScroll.Size = new System.Drawing.Size(72, 16);
             this.checkBoxAutoScroll.TabIndex = 18;
@@ -403,7 +402,6 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.groupBox5);
-            this.panel1.Controls.Add(this.groupBox4);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.buttonClear);
             this.panel1.Controls.Add(this.checkBoxPromiscuous);
@@ -416,7 +414,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(764, 532);
+            this.panel1.Size = new System.Drawing.Size(684, 361);
             this.panel1.TabIndex = 19;
             // 
             // groupBox5
@@ -425,7 +423,7 @@
             this.groupBox5.Controls.Add(this.radioButtonBin);
             this.groupBox5.Location = new System.Drawing.Point(417, 32);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(160, 41);
+            this.groupBox5.Size = new System.Drawing.Size(84, 63);
             this.groupBox5.TabIndex = 24;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "字节显示";
@@ -434,7 +432,7 @@
             // 
             this.radioButtonHex.AutoSize = true;
             this.radioButtonHex.Checked = true;
-            this.radioButtonHex.Location = new System.Drawing.Point(82, 17);
+            this.radioButtonHex.Location = new System.Drawing.Point(10, 17);
             this.radioButtonHex.Name = "radioButtonHex";
             this.radioButtonHex.Size = new System.Drawing.Size(71, 16);
             this.radioButtonHex.TabIndex = 1;
@@ -446,42 +444,13 @@
             // radioButtonBin
             // 
             this.radioButtonBin.AutoSize = true;
-            this.radioButtonBin.Location = new System.Drawing.Point(10, 17);
+            this.radioButtonBin.Location = new System.Drawing.Point(10, 39);
             this.radioButtonBin.Name = "radioButtonBin";
             this.radioButtonBin.Size = new System.Drawing.Size(59, 16);
             this.radioButtonBin.TabIndex = 0;
             this.radioButtonBin.Text = "二进制";
             this.radioButtonBin.UseVisualStyleBackColor = true;
             this.radioButtonBin.CheckedChanged += new System.EventHandler(this.radioButtonBin_CheckedChanged);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.buttonCancelTrace);
-            this.groupBox4.Controls.Add(this.textBoxTrace);
-            this.groupBox4.Location = new System.Drawing.Point(3, 79);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(389, 45);
-            this.groupBox4.TabIndex = 23;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "流追踪";
-            // 
-            // buttonCancelTrace
-            // 
-            this.buttonCancelTrace.Location = new System.Drawing.Point(283, 15);
-            this.buttonCancelTrace.Name = "buttonCancelTrace";
-            this.buttonCancelTrace.Size = new System.Drawing.Size(100, 23);
-            this.buttonCancelTrace.TabIndex = 1;
-            this.buttonCancelTrace.Text = "取消";
-            this.buttonCancelTrace.UseVisualStyleBackColor = true;
-            this.buttonCancelTrace.Click += new System.EventHandler(this.buttonCancelTrace_Click);
-            // 
-            // textBoxTrace
-            // 
-            this.textBoxTrace.Location = new System.Drawing.Point(6, 16);
-            this.textBoxTrace.Name = "textBoxTrace";
-            this.textBoxTrace.ReadOnly = true;
-            this.textBoxTrace.Size = new System.Drawing.Size(273, 21);
-            this.textBoxTrace.TabIndex = 0;
             // 
             // groupBox1
             // 
@@ -627,14 +596,14 @@
             // traceTCPToolStripMenuItem
             // 
             this.traceTCPToolStripMenuItem.Name = "traceTCPToolStripMenuItem";
-            this.traceTCPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.traceTCPToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.traceTCPToolStripMenuItem.Text = "TCP流";
             this.traceTCPToolStripMenuItem.Click += new System.EventHandler(this.traceTCPToolStripMenuItem_Click);
             // 
             // traceUDPToolStripMenuItem
             // 
             this.traceUDPToolStripMenuItem.Name = "traceUDPToolStripMenuItem";
-            this.traceUDPToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.traceUDPToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.traceUDPToolStripMenuItem.Text = "UDP流";
             this.traceUDPToolStripMenuItem.Click += new System.EventHandler(this.traceUDPToolStripMenuItem_Click);
             // 
@@ -642,12 +611,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(764, 532);
+            this.ClientSize = new System.Drawing.Size(684, 361);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(780, 39);
+            this.MinimumSize = new System.Drawing.Size(700, 400);
             this.Name = "MainForm";
-            this.Text = "WinSniffer";
+            this.Text = "网络嗅探器";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -667,8 +636,6 @@
             this.panel1.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.listviewMenuStrip.ResumeLayout(false);
@@ -695,7 +662,7 @@
         private System.Windows.Forms.CheckBox checkBoxAutoScroll;
         private System.Windows.Forms.ColumnHeader columnLength;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ListBox listBoxParse2;
+        private System.Windows.Forms.ListBox listBoxParse;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.TextBox textBoxBinary;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -710,9 +677,6 @@
         private System.Windows.Forms.ContextMenuStrip listviewMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem 流追踪ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem traceTCPToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox textBoxTrace;
-        private System.Windows.Forms.Button buttonCancelTrace;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.RadioButton radioButtonHex;
         private System.Windows.Forms.RadioButton radioButtonBin;

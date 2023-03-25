@@ -54,6 +54,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComboBoxListItem.cs" />
+    <Compile Include="DataCache.cs" />
     <Compile Include="ProcessTracer.cs" />
     <Compile Include="ProtocolAnalyzer\ARPAnalyzer.cs" />
     <Compile Include="ProtocolAnalyzer\EthernetAnalyzer.cs" />
