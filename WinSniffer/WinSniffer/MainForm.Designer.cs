@@ -79,16 +79,18 @@
             this.radioButtonHex = new System.Windows.Forms.RadioButton();
             this.radioButtonBin = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBoxHTTP = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.checkBoxListenAll = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenHTTP = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.checkBoxTLS = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenTLS = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.checkBoxUDP = new System.Windows.Forms.CheckBox();
-            this.checkBoxARP = new System.Windows.Forms.CheckBox();
-            this.checkBoxICMP = new System.Windows.Forms.CheckBox();
-            this.checkBoxTCP = new System.Windows.Forms.CheckBox();
-            this.checkBoxIPv6 = new System.Windows.Forms.CheckBox();
-            this.checkBoxIPv4 = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenUDP = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenARP = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenICMP = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenTCP = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenIPv6 = new System.Windows.Forms.CheckBox();
+            this.checkBoxListenIPv4 = new System.Windows.Forms.CheckBox();
             this.listviewMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.流追踪ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traceTCPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -125,7 +127,7 @@
             // 
             // buttonStop
             // 
-            this.buttonStop.Location = new System.Drawing.Point(576, 78);
+            this.buttonStop.Location = new System.Drawing.Point(519, 79);
             this.buttonStop.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(40, 40);
@@ -136,7 +138,7 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(532, 78);
+            this.buttonStart.Location = new System.Drawing.Point(475, 79);
             this.buttonStart.Margin = new System.Windows.Forms.Padding(2);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(40, 40);
@@ -165,7 +167,7 @@
             this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(408, 112);
+            this.listViewPacket.Size = new System.Drawing.Size(383, 111);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
@@ -223,12 +225,12 @@
             this.comboBoxDeviceList.FormattingEnabled = true;
             this.comboBoxDeviceList.Location = new System.Drawing.Point(61, 6);
             this.comboBoxDeviceList.Name = "comboBoxDeviceList";
-            this.comboBoxDeviceList.Size = new System.Drawing.Size(686, 20);
+            this.comboBoxDeviceList.Size = new System.Drawing.Size(631, 20);
             this.comboBoxDeviceList.TabIndex = 12;
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(620, 78);
+            this.buttonClear.Location = new System.Drawing.Point(563, 79);
             this.buttonClear.Margin = new System.Windows.Forms.Padding(2);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(40, 40);
@@ -253,8 +255,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(794, 236);
-            this.splitContainer1.SplitterDistance = 112;
+            this.splitContainer1.Size = new System.Drawing.Size(748, 236);
+            this.splitContainer1.SplitterDistance = 111;
             this.splitContainer1.TabIndex = 14;
             // 
             // splitContainer3
@@ -271,8 +273,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.listViewTrace);
-            this.splitContainer3.Size = new System.Drawing.Size(794, 112);
-            this.splitContainer3.SplitterDistance = 408;
+            this.splitContainer3.Size = new System.Drawing.Size(748, 111);
+            this.splitContainer3.SplitterDistance = 383;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 12;
             // 
@@ -296,7 +298,7 @@
             this.listViewTrace.Margin = new System.Windows.Forms.Padding(2);
             this.listViewTrace.MultiSelect = false;
             this.listViewTrace.Name = "listViewTrace";
-            this.listViewTrace.Size = new System.Drawing.Size(384, 112);
+            this.listViewTrace.Size = new System.Drawing.Size(363, 111);
             this.listViewTrace.TabIndex = 12;
             this.listViewTrace.UseCompatibleStateImageBehavior = false;
             this.listViewTrace.View = System.Windows.Forms.View.Details;
@@ -358,8 +360,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.listBoxParse);
-            this.splitContainer2.Size = new System.Drawing.Size(794, 120);
-            this.splitContainer2.SplitterDistance = 408;
+            this.splitContainer2.Size = new System.Drawing.Size(748, 121);
+            this.splitContainer2.SplitterDistance = 383;
             this.splitContainer2.TabIndex = 0;
             // 
             // textBoxBinary
@@ -371,7 +373,7 @@
             this.textBoxBinary.Name = "textBoxBinary";
             this.textBoxBinary.ReadOnly = true;
             this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxBinary.Size = new System.Drawing.Size(408, 120);
+            this.textBoxBinary.Size = new System.Drawing.Size(383, 121);
             this.textBoxBinary.TabIndex = 0;
             this.textBoxBinary.WordWrap = false;
             // 
@@ -383,7 +385,7 @@
             this.listBoxParse.ItemHeight = 12;
             this.listBoxParse.Location = new System.Drawing.Point(0, 0);
             this.listBoxParse.Name = "listBoxParse";
-            this.listBoxParse.Size = new System.Drawing.Size(382, 120);
+            this.listBoxParse.Size = new System.Drawing.Size(361, 121);
             this.listBoxParse.TabIndex = 0;
             // 
             // checkBoxPromiscuous
@@ -391,7 +393,7 @@
             this.checkBoxPromiscuous.AutoSize = true;
             this.checkBoxPromiscuous.Checked = true;
             this.checkBoxPromiscuous.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxPromiscuous.Location = new System.Drawing.Point(671, 78);
+            this.checkBoxPromiscuous.Location = new System.Drawing.Point(614, 79);
             this.checkBoxPromiscuous.Name = "checkBoxPromiscuous";
             this.checkBoxPromiscuous.Size = new System.Drawing.Size(72, 16);
             this.checkBoxPromiscuous.TabIndex = 15;
@@ -403,7 +405,7 @@
             this.checkBoxAutoScroll.AutoSize = true;
             this.checkBoxAutoScroll.Checked = true;
             this.checkBoxAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAutoScroll.Location = new System.Drawing.Point(671, 102);
+            this.checkBoxAutoScroll.Location = new System.Drawing.Point(614, 103);
             this.checkBoxAutoScroll.Name = "checkBoxAutoScroll";
             this.checkBoxAutoScroll.Size = new System.Drawing.Size(72, 16);
             this.checkBoxAutoScroll.TabIndex = 18;
@@ -426,7 +428,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(750, 361);
+            this.panel1.Size = new System.Drawing.Size(704, 361);
             this.panel1.TabIndex = 19;
             // 
             // groupBox2
@@ -463,6 +465,8 @@
             // 
             this.checkBoxDisplayAll.AutoSize = true;
             this.checkBoxDisplayAll.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayAll.Checked = true;
+            this.checkBoxDisplayAll.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayAll.Location = new System.Drawing.Point(417, 17);
             this.checkBoxDisplayAll.Name = "checkBoxDisplayAll";
             this.checkBoxDisplayAll.Size = new System.Drawing.Size(48, 16);
@@ -475,6 +479,8 @@
             // 
             this.checkBoxDisplayHTTP.AutoSize = true;
             this.checkBoxDisplayHTTP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayHTTP.Checked = true;
+            this.checkBoxDisplayHTTP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayHTTP.Location = new System.Drawing.Point(358, 17);
             this.checkBoxDisplayHTTP.Name = "checkBoxDisplayHTTP";
             this.checkBoxDisplayHTTP.Size = new System.Drawing.Size(48, 16);
@@ -496,6 +502,8 @@
             // 
             this.checkBoxDisplayTLS.AutoSize = true;
             this.checkBoxDisplayTLS.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayTLS.Checked = true;
+            this.checkBoxDisplayTLS.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayTLS.Location = new System.Drawing.Point(307, 17);
             this.checkBoxDisplayTLS.Name = "checkBoxDisplayTLS";
             this.checkBoxDisplayTLS.Size = new System.Drawing.Size(42, 16);
@@ -517,6 +525,8 @@
             // 
             this.checkBoxDisplayUDP.AutoSize = true;
             this.checkBoxDisplayUDP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayUDP.Checked = true;
+            this.checkBoxDisplayUDP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayUDP.Location = new System.Drawing.Point(259, 17);
             this.checkBoxDisplayUDP.Name = "checkBoxDisplayUDP";
             this.checkBoxDisplayUDP.Size = new System.Drawing.Size(42, 16);
@@ -529,6 +539,8 @@
             // 
             this.checkBoxDisplayARP.AutoSize = true;
             this.checkBoxDisplayARP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayARP.Checked = true;
+            this.checkBoxDisplayARP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayARP.Location = new System.Drawing.Point(162, 17);
             this.checkBoxDisplayARP.Name = "checkBoxDisplayARP";
             this.checkBoxDisplayARP.Size = new System.Drawing.Size(42, 16);
@@ -541,6 +553,8 @@
             // 
             this.checkBoxDisplayICMP.AutoSize = true;
             this.checkBoxDisplayICMP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayICMP.Checked = true;
+            this.checkBoxDisplayICMP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayICMP.Location = new System.Drawing.Point(110, 17);
             this.checkBoxDisplayICMP.Name = "checkBoxDisplayICMP";
             this.checkBoxDisplayICMP.Size = new System.Drawing.Size(48, 16);
@@ -553,6 +567,8 @@
             // 
             this.checkBoxDisplayTCP.AutoSize = true;
             this.checkBoxDisplayTCP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayTCP.Checked = true;
+            this.checkBoxDisplayTCP.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayTCP.Location = new System.Drawing.Point(215, 17);
             this.checkBoxDisplayTCP.Name = "checkBoxDisplayTCP";
             this.checkBoxDisplayTCP.Size = new System.Drawing.Size(42, 16);
@@ -565,6 +581,8 @@
             // 
             this.checkBoxDisplayIPv6.AutoSize = true;
             this.checkBoxDisplayIPv6.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayIPv6.Checked = true;
+            this.checkBoxDisplayIPv6.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayIPv6.Location = new System.Drawing.Point(58, 17);
             this.checkBoxDisplayIPv6.Name = "checkBoxDisplayIPv6";
             this.checkBoxDisplayIPv6.Size = new System.Drawing.Size(48, 16);
@@ -577,6 +595,8 @@
             // 
             this.checkBoxDisplayIPv4.AutoSize = true;
             this.checkBoxDisplayIPv4.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxDisplayIPv4.Checked = true;
+            this.checkBoxDisplayIPv4.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxDisplayIPv4.Location = new System.Drawing.Point(6, 17);
             this.checkBoxDisplayIPv4.Name = "checkBoxDisplayIPv4";
             this.checkBoxDisplayIPv4.Size = new System.Drawing.Size(48, 16);
@@ -589,7 +609,7 @@
             // 
             this.groupBox5.Controls.Add(this.radioButtonHex);
             this.groupBox5.Controls.Add(this.radioButtonBin);
-            this.groupBox5.Location = new System.Drawing.Point(487, 32);
+            this.groupBox5.Location = new System.Drawing.Point(475, 32);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(155, 41);
             this.groupBox5.TabIndex = 24;
@@ -622,33 +642,61 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.checkBoxHTTP);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.checkBoxListenAll);
+            this.groupBox1.Controls.Add(this.checkBoxListenHTTP);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.checkBoxTLS);
+            this.groupBox1.Controls.Add(this.checkBoxListenTLS);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.checkBoxUDP);
-            this.groupBox1.Controls.Add(this.checkBoxARP);
-            this.groupBox1.Controls.Add(this.checkBoxICMP);
-            this.groupBox1.Controls.Add(this.checkBoxTCP);
-            this.groupBox1.Controls.Add(this.checkBoxIPv6);
-            this.groupBox1.Controls.Add(this.checkBoxIPv4);
+            this.groupBox1.Controls.Add(this.checkBoxListenUDP);
+            this.groupBox1.Controls.Add(this.checkBoxListenARP);
+            this.groupBox1.Controls.Add(this.checkBoxListenICMP);
+            this.groupBox1.Controls.Add(this.checkBoxListenTCP);
+            this.groupBox1.Controls.Add(this.checkBoxListenIPv6);
+            this.groupBox1.Controls.Add(this.checkBoxListenIPv4);
             this.groupBox1.Location = new System.Drawing.Point(3, 32);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(408, 41);
+            this.groupBox1.Size = new System.Drawing.Size(467, 41);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "监听过滤";
             // 
-            // checkBoxHTTP
+            // label6
             // 
-            this.checkBoxHTTP.AutoSize = true;
-            this.checkBoxHTTP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxHTTP.Location = new System.Drawing.Point(358, 17);
-            this.checkBoxHTTP.Name = "checkBoxHTTP";
-            this.checkBoxHTTP.Size = new System.Drawing.Size(48, 16);
-            this.checkBoxHTTP.TabIndex = 1;
-            this.checkBoxHTTP.Text = "HTTP";
-            this.checkBoxHTTP.UseVisualStyleBackColor = false;
+            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label6.Location = new System.Drawing.Point(406, 15);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(2, 20);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "label6";
+            // 
+            // checkBoxListenAll
+            // 
+            this.checkBoxListenAll.AutoSize = true;
+            this.checkBoxListenAll.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenAll.Checked = true;
+            this.checkBoxListenAll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenAll.Location = new System.Drawing.Point(417, 17);
+            this.checkBoxListenAll.Name = "checkBoxListenAll";
+            this.checkBoxListenAll.Size = new System.Drawing.Size(48, 16);
+            this.checkBoxListenAll.TabIndex = 10;
+            this.checkBoxListenAll.Text = "全选";
+            this.checkBoxListenAll.UseVisualStyleBackColor = false;
+            this.checkBoxListenAll.CheckedChanged += new System.EventHandler(this.CheckBoxListenAll_CheckedChanged);
+            // 
+            // checkBoxListenHTTP
+            // 
+            this.checkBoxListenHTTP.AutoSize = true;
+            this.checkBoxListenHTTP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenHTTP.Checked = true;
+            this.checkBoxListenHTTP.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenHTTP.Location = new System.Drawing.Point(358, 17);
+            this.checkBoxListenHTTP.Name = "checkBoxListenHTTP";
+            this.checkBoxListenHTTP.Size = new System.Drawing.Size(48, 16);
+            this.checkBoxListenHTTP.TabIndex = 1;
+            this.checkBoxListenHTTP.Text = "HTTP";
+            this.checkBoxListenHTTP.UseVisualStyleBackColor = false;
+            this.checkBoxListenHTTP.CheckedChanged += new System.EventHandler(this.CheckBoxListenHTTP_CheckedChanged);
             // 
             // label2
             // 
@@ -659,16 +707,19 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "label2";
             // 
-            // checkBoxTLS
+            // checkBoxListenTLS
             // 
-            this.checkBoxTLS.AutoSize = true;
-            this.checkBoxTLS.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxTLS.Location = new System.Drawing.Point(307, 17);
-            this.checkBoxTLS.Name = "checkBoxTLS";
-            this.checkBoxTLS.Size = new System.Drawing.Size(42, 16);
-            this.checkBoxTLS.TabIndex = 3;
-            this.checkBoxTLS.Text = "TLS";
-            this.checkBoxTLS.UseVisualStyleBackColor = false;
+            this.checkBoxListenTLS.AutoSize = true;
+            this.checkBoxListenTLS.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenTLS.Checked = true;
+            this.checkBoxListenTLS.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenTLS.Location = new System.Drawing.Point(307, 17);
+            this.checkBoxListenTLS.Name = "checkBoxListenTLS";
+            this.checkBoxListenTLS.Size = new System.Drawing.Size(42, 16);
+            this.checkBoxListenTLS.TabIndex = 3;
+            this.checkBoxListenTLS.Text = "TLS";
+            this.checkBoxListenTLS.UseVisualStyleBackColor = false;
+            this.checkBoxListenTLS.CheckedChanged += new System.EventHandler(this.CheckBoxListenTLS_CheckedChanged);
             // 
             // label1
             // 
@@ -679,71 +730,89 @@
             this.label1.TabIndex = 6;
             this.label1.Text = "label1";
             // 
-            // checkBoxUDP
+            // checkBoxListenUDP
             // 
-            this.checkBoxUDP.AutoSize = true;
-            this.checkBoxUDP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxUDP.Location = new System.Drawing.Point(259, 17);
-            this.checkBoxUDP.Name = "checkBoxUDP";
-            this.checkBoxUDP.Size = new System.Drawing.Size(42, 16);
-            this.checkBoxUDP.TabIndex = 2;
-            this.checkBoxUDP.Text = "UDP";
-            this.checkBoxUDP.UseVisualStyleBackColor = false;
+            this.checkBoxListenUDP.AutoSize = true;
+            this.checkBoxListenUDP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenUDP.Checked = true;
+            this.checkBoxListenUDP.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenUDP.Location = new System.Drawing.Point(259, 17);
+            this.checkBoxListenUDP.Name = "checkBoxListenUDP";
+            this.checkBoxListenUDP.Size = new System.Drawing.Size(42, 16);
+            this.checkBoxListenUDP.TabIndex = 2;
+            this.checkBoxListenUDP.Text = "UDP";
+            this.checkBoxListenUDP.UseVisualStyleBackColor = false;
+            this.checkBoxListenUDP.CheckedChanged += new System.EventHandler(this.CheckBoxListenUDP_CheckedChanged);
             // 
-            // checkBoxARP
+            // checkBoxListenARP
             // 
-            this.checkBoxARP.AutoSize = true;
-            this.checkBoxARP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxARP.Location = new System.Drawing.Point(162, 17);
-            this.checkBoxARP.Name = "checkBoxARP";
-            this.checkBoxARP.Size = new System.Drawing.Size(42, 16);
-            this.checkBoxARP.TabIndex = 5;
-            this.checkBoxARP.Text = "ARP";
-            this.checkBoxARP.UseVisualStyleBackColor = false;
+            this.checkBoxListenARP.AutoSize = true;
+            this.checkBoxListenARP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenARP.Checked = true;
+            this.checkBoxListenARP.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenARP.Location = new System.Drawing.Point(162, 17);
+            this.checkBoxListenARP.Name = "checkBoxListenARP";
+            this.checkBoxListenARP.Size = new System.Drawing.Size(42, 16);
+            this.checkBoxListenARP.TabIndex = 5;
+            this.checkBoxListenARP.Text = "ARP";
+            this.checkBoxListenARP.UseVisualStyleBackColor = false;
+            this.checkBoxListenARP.CheckedChanged += new System.EventHandler(this.CheckBoxListenARP_CheckedChanged);
             // 
-            // checkBoxICMP
+            // checkBoxListenICMP
             // 
-            this.checkBoxICMP.AutoSize = true;
-            this.checkBoxICMP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxICMP.Location = new System.Drawing.Point(110, 17);
-            this.checkBoxICMP.Name = "checkBoxICMP";
-            this.checkBoxICMP.Size = new System.Drawing.Size(48, 16);
-            this.checkBoxICMP.TabIndex = 4;
-            this.checkBoxICMP.Text = "ICMP";
-            this.checkBoxICMP.UseVisualStyleBackColor = false;
+            this.checkBoxListenICMP.AutoSize = true;
+            this.checkBoxListenICMP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenICMP.Checked = true;
+            this.checkBoxListenICMP.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenICMP.Location = new System.Drawing.Point(110, 17);
+            this.checkBoxListenICMP.Name = "checkBoxListenICMP";
+            this.checkBoxListenICMP.Size = new System.Drawing.Size(48, 16);
+            this.checkBoxListenICMP.TabIndex = 4;
+            this.checkBoxListenICMP.Text = "ICMP";
+            this.checkBoxListenICMP.UseVisualStyleBackColor = false;
+            this.checkBoxListenICMP.CheckedChanged += new System.EventHandler(this.CheckBoxListenICMP_CheckedChanged);
             // 
-            // checkBoxTCP
+            // checkBoxListenTCP
             // 
-            this.checkBoxTCP.AutoSize = true;
-            this.checkBoxTCP.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxTCP.Location = new System.Drawing.Point(215, 17);
-            this.checkBoxTCP.Name = "checkBoxTCP";
-            this.checkBoxTCP.Size = new System.Drawing.Size(42, 16);
-            this.checkBoxTCP.TabIndex = 1;
-            this.checkBoxTCP.Text = "TCP";
-            this.checkBoxTCP.UseVisualStyleBackColor = false;
+            this.checkBoxListenTCP.AutoSize = true;
+            this.checkBoxListenTCP.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenTCP.Checked = true;
+            this.checkBoxListenTCP.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenTCP.Location = new System.Drawing.Point(215, 17);
+            this.checkBoxListenTCP.Name = "checkBoxListenTCP";
+            this.checkBoxListenTCP.Size = new System.Drawing.Size(42, 16);
+            this.checkBoxListenTCP.TabIndex = 1;
+            this.checkBoxListenTCP.Text = "TCP";
+            this.checkBoxListenTCP.UseVisualStyleBackColor = false;
+            this.checkBoxListenTCP.CheckedChanged += new System.EventHandler(this.CheckBoxListenTCP_CheckedChanged);
             // 
-            // checkBoxIPv6
+            // checkBoxListenIPv6
             // 
-            this.checkBoxIPv6.AutoSize = true;
-            this.checkBoxIPv6.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxIPv6.Location = new System.Drawing.Point(58, 17);
-            this.checkBoxIPv6.Name = "checkBoxIPv6";
-            this.checkBoxIPv6.Size = new System.Drawing.Size(48, 16);
-            this.checkBoxIPv6.TabIndex = 3;
-            this.checkBoxIPv6.Text = "IPv6";
-            this.checkBoxIPv6.UseVisualStyleBackColor = false;
+            this.checkBoxListenIPv6.AutoSize = true;
+            this.checkBoxListenIPv6.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenIPv6.Checked = true;
+            this.checkBoxListenIPv6.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenIPv6.Location = new System.Drawing.Point(58, 17);
+            this.checkBoxListenIPv6.Name = "checkBoxListenIPv6";
+            this.checkBoxListenIPv6.Size = new System.Drawing.Size(48, 16);
+            this.checkBoxListenIPv6.TabIndex = 3;
+            this.checkBoxListenIPv6.Text = "IPv6";
+            this.checkBoxListenIPv6.UseVisualStyleBackColor = false;
+            this.checkBoxListenIPv6.CheckedChanged += new System.EventHandler(this.CheckBoxListenIPv6_CheckedChanged);
             // 
-            // checkBoxIPv4
+            // checkBoxListenIPv4
             // 
-            this.checkBoxIPv4.AutoSize = true;
-            this.checkBoxIPv4.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxIPv4.Location = new System.Drawing.Point(6, 17);
-            this.checkBoxIPv4.Name = "checkBoxIPv4";
-            this.checkBoxIPv4.Size = new System.Drawing.Size(48, 16);
-            this.checkBoxIPv4.TabIndex = 0;
-            this.checkBoxIPv4.Text = "IPv4";
-            this.checkBoxIPv4.UseVisualStyleBackColor = false;
+            this.checkBoxListenIPv4.AutoSize = true;
+            this.checkBoxListenIPv4.BackColor = System.Drawing.Color.Transparent;
+            this.checkBoxListenIPv4.Checked = true;
+            this.checkBoxListenIPv4.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxListenIPv4.Location = new System.Drawing.Point(6, 17);
+            this.checkBoxListenIPv4.Name = "checkBoxListenIPv4";
+            this.checkBoxListenIPv4.Size = new System.Drawing.Size(48, 16);
+            this.checkBoxListenIPv4.TabIndex = 0;
+            this.checkBoxListenIPv4.Text = "IPv4";
+            this.checkBoxListenIPv4.UseVisualStyleBackColor = false;
+            this.checkBoxListenIPv4.CheckedChanged += new System.EventHandler(this.CheckBoxListenIPv4_CheckedChanged);
             // 
             // listviewMenuStrip
             // 
@@ -779,10 +848,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(750, 361);
+            this.ClientSize = new System.Drawing.Size(704, 361);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(700, 400);
+            this.MinimumSize = new System.Drawing.Size(720, 400);
             this.Name = "MainForm";
             this.Text = "网络嗅探器";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -836,14 +905,14 @@
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.TextBox textBoxBinary;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox checkBoxICMP;
-        private System.Windows.Forms.CheckBox checkBoxIPv6;
-        private System.Windows.Forms.CheckBox checkBoxUDP;
-        private System.Windows.Forms.CheckBox checkBoxTCP;
-        private System.Windows.Forms.CheckBox checkBoxIPv4;
-        private System.Windows.Forms.CheckBox checkBoxTLS;
-        private System.Windows.Forms.CheckBox checkBoxHTTP;
-        private System.Windows.Forms.CheckBox checkBoxARP;
+        private System.Windows.Forms.CheckBox checkBoxListenICMP;
+        private System.Windows.Forms.CheckBox checkBoxListenIPv6;
+        private System.Windows.Forms.CheckBox checkBoxListenUDP;
+        private System.Windows.Forms.CheckBox checkBoxListenTCP;
+        private System.Windows.Forms.CheckBox checkBoxListenIPv4;
+        private System.Windows.Forms.CheckBox checkBoxListenTLS;
+        private System.Windows.Forms.CheckBox checkBoxListenHTTP;
+        private System.Windows.Forms.CheckBox checkBoxListenARP;
         private System.Windows.Forms.ContextMenuStrip listviewMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem 流追踪ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem traceTCPToolStripMenuItem;
@@ -878,6 +947,8 @@
         private System.Windows.Forms.CheckBox checkBoxDisplayIPv4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox checkBoxDisplayAll;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox checkBoxListenAll;
     }
 }
 

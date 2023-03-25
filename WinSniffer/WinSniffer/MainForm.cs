@@ -2,6 +2,7 @@
 using SharpPcap;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using WinSniffer.ProtocolAnalyzer;
@@ -41,14 +42,20 @@ namespace WinSniffer
         private int frame;                  // 当前数据包帧号
         private PosixTimeval startTime;     // 抓包开始时间
         private ParsedPacket tracePacket;
-        private int selectIndex;            // 选中数据包帧号
+        private int selectFrame;            // 选中数据包帧号
 
         // 控件
-        private List<CheckBox> checkBoxList;    // 监听过滤
+        private List<CheckBox> disableList;     // 开始后禁用列表
+        private List<CheckBox> checkBoxListenList;  // 监听过滤
         private List<CheckBox> checkBoxDisplayList; // 显示过滤
         private ListViewItem curItem;           // 选中列表项
         private TraceForm traceForm;            // 流追踪窗口
 
+        private bool checkingDisplayAll = false;
+        private bool checkingDisplaySingle = false;
+
+        private bool checkingListenAll = false;
+        private bool checkingListenSingle = false;
 
         public MainForm()
         {
@@ -65,9 +72,14 @@ namespace WinSniffer
 
             parsedPacketDict = new Dictionary<int, ParsedPacket>();
 
-            checkBoxList = new List<CheckBox>
+            disableList = new List<CheckBox>
             {
-                checkBoxPromiscuous, checkBoxIPv4, checkBoxIPv6, checkBoxICMP, checkBoxARP, checkBoxTCP, checkBoxUDP, checkBoxTLS, checkBoxHTTP,
+                checkBoxPromiscuous, checkBoxListenIPv4, checkBoxListenIPv6, checkBoxListenICMP, checkBoxListenARP, checkBoxListenTCP, checkBoxListenUDP, checkBoxListenTLS, checkBoxListenHTTP, checkBoxListenAll,
+            };
+
+            checkBoxListenList = new List<CheckBox>
+            {
+                checkBoxListenIPv4, checkBoxListenIPv6, checkBoxListenICMP, checkBoxListenARP, checkBoxListenTCP, checkBoxListenUDP, checkBoxListenTLS, checkBoxListenHTTP,
             };
 
             checkBoxDisplayList = new List<CheckBox>
@@ -178,7 +190,7 @@ namespace WinSniffer
             buttonClear.Enabled = true;
             comboBoxDeviceList.Enabled = true;
 
-            foreach (var checkBox in checkBoxList)
+            foreach (var checkBox in disableList)
             {
                 checkBox.Enabled = true;
             }
@@ -211,7 +223,7 @@ namespace WinSniffer
             buttonClear.Enabled = false;
             comboBoxDeviceList.Enabled = false;
 
-            foreach (var checkBox in checkBoxList)
+            foreach (var checkBox in disableList)
             {
                 checkBox.Enabled = false;
             }
@@ -248,35 +260,44 @@ namespace WinSniffer
                 device.Open();
             }
 
-            // 设置过滤器
+            device.Filter = MakeFilters();
+
+            device.StartCapture();
+        }
+
+
+        // 设置过滤器
+        private string MakeFilters()
+        {
+            // 全选
+            if (checkBoxListenAll.Checked) return string.Empty;
+
             List<string> filters = new List<string>();
             // 网络层
-            if (checkBoxIPv4.Checked) filters.Add("ip");
-            if (checkBoxIPv6.Checked) filters.Add("ip6");
-            if (checkBoxICMP.Checked) filters.Add("icmp or icmp6");
-            if (checkBoxARP.Checked) filters.Add("arp");
+            if (checkBoxListenIPv4.Checked) filters.Add("ip");
+            if (checkBoxListenIPv6.Checked) filters.Add("ip6");
+            if (checkBoxListenICMP.Checked) filters.Add("icmp or icmp6");
+            if (checkBoxListenARP.Checked) filters.Add("arp");
             // 传输层
-            if (checkBoxTCP.Checked)
+            if (checkBoxListenTCP.Checked)
             {
-                if (checkBoxIPv4.Checked) filters.Add("(ip proto \\tcp)");
-                else if (checkBoxIPv6.Checked) filters.Add("(ip6 proto \\tcp)");
+                if (checkBoxListenIPv4.Checked) filters.Add("(ip proto \\tcp)");
+                else if (checkBoxListenIPv6.Checked) filters.Add("(ip6 proto \\tcp)");
                 else filters.Add("(ip proto \\tcp) or (ip6 proto \\tcp)");
             }
-            if (checkBoxUDP.Checked)
+            if (checkBoxListenUDP.Checked)
             {
-                if (checkBoxIPv4.Checked) filters.Add("(ip proto \\udp)");
-                else if (checkBoxIPv6.Checked) filters.Add("(ip6 proto \\udp)");
+                if (checkBoxListenIPv4.Checked) filters.Add("(ip proto \\udp)");
+                else if (checkBoxListenIPv6.Checked) filters.Add("(ip6 proto \\udp)");
                 else filters.Add("(ip proto \\udp) or (ip6 proto \\udp)");
             }
 
-            if (checkBoxTLS.Checked) filters.Add("(tcp port 443)");
+            if (checkBoxListenTLS.Checked) filters.Add("(tcp port 443)");
 
             // 应用层
-            if (checkBoxHTTP.Checked) filters.Add("(tcp port 80)");
+            if (checkBoxListenHTTP.Checked) filters.Add("(tcp port 80)");
 
-            device.Filter = string.Join(" or ", filters);
-
-            device.StartCapture();
+            return string.Join(" or ", filters);
         }
 
         // 解析包的线程
@@ -340,13 +361,18 @@ namespace WinSniffer
                 if (view.SelectedIndices.Count > 0)
                 {
                     ListViewItem item = view.SelectedItems[0];
-                    selectIndex = int.Parse(item.SubItems[0].Text);
+                    selectFrame = int.Parse(item.SubItems[0].Text);
 
-                    if (radioButtonBin.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintBin(rawDict[selectIndex]);
-                    else if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectIndex]);
+                    if (radioButtonBin.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintBin(rawDict[selectFrame]);
+                    else if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectFrame]);
 
                     listBoxParse.Items.Clear();
-                    ParsedPacket pp = parsedPacketDict[selectIndex];
+                    ParsedPacket pp = parsedPacketDict[selectFrame];
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(string.Format("Frame {0}: {1} bytes ({2} bits)", selectFrame, pp.length, pp.length * 8));
+                    listBoxParse.Items.Add(sb.ToString());
+
 
                     listBoxParse.Items.Add("--------------------");
                     listBoxParse.Items.Add("Data Link Layer");
@@ -529,7 +555,14 @@ namespace WinSniffer
         // 开始按钮
         private void ButtonStart_Click(object sender, EventArgs e)
         {
-            StartCapture();
+            if (comboBoxDeviceList.SelectedIndex == -1)
+            {
+                MessageBox.Show("请先选择监听设备!", "提示");
+            }
+            else
+            {
+                StartCapture();
+            }
         }
 
         private void Reset()
@@ -573,8 +606,8 @@ namespace WinSniffer
             if (item != null && e.Button == MouseButtons.Right)
             {
                 curItem = item;
-                var sub = curItem.SubItems[0];
-                int frame = int.Parse(sub.Text);
+                int frame = int.Parse(item.SubItems[0].Text);
+
                 tracePacket = parsedPacketDict[frame];
 
                 traceTCPToolStripMenuItem.Enabled = false;
@@ -620,12 +653,12 @@ namespace WinSniffer
 
         private void RadioButtonBin_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButtonBin.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintBin(rawDict[selectIndex]);
+            if (radioButtonBin.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintBin(rawDict[selectFrame]);
         }
 
         private void RadioButtonHex_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectIndex]);
+            if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectFrame]);
         }
 
         private List<ParsedPacket> TraceIP(ParsedPacket target)
@@ -785,70 +818,189 @@ namespace WinSniffer
 
         private void CheckBoxDisplayIPv4_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayIPv4.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayIPv6_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayIPv6.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayICMP_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayICMP.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayARP_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayARP.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayTCP_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayTCP.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayUDP_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayUDP.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayTLS_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayTLS.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayHTTP_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplayAll) return;
+            checkingDisplaySingle = true;
             if (checkBoxDisplayAll.Checked && !checkBoxDisplayHTTP.Checked)
                 checkBoxDisplayAll.Checked = false;
+            checkingDisplaySingle = false;
             Rebuild();
         }
 
         private void CheckBoxDisplayAll_CheckedChanged(object sender, EventArgs e)
         {
+            if (checkingDisplaySingle) return;
+            checkingDisplayAll = true;
             if (checkBoxDisplayAll.Checked)
             {
                 foreach (var checkbox in checkBoxDisplayList)
-                {
                     checkbox.Checked = true;
-                }
             }
+            else
+            {
+                foreach (var checkbox in checkBoxDisplayList)
+                    checkbox.Checked = false;
+            }
+            checkingDisplayAll = false;
             Rebuild();
+        }
+
+        private void CheckBoxListenAll_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingListenSingle) return;
+            checkingListenAll = true;
+            if (checkBoxListenAll.Checked)
+            {
+                foreach (var checkbox in checkBoxListenList)
+                    checkbox.Checked = true;
+            }
+            else
+            {
+                foreach (var checkbox in checkBoxListenList)
+                    checkbox.Checked = false;
+            }
+            checkingListenAll = false;
+        }
+
+        private void CheckBoxListenHTTP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenHTTP.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
+        }
+
+        private void CheckBoxListenTLS_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenTLS.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
+        }
+
+        private void CheckBoxListenUDP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenUDP.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
+        }
+
+        private void CheckBoxListenTCP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenTCP.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
+        }
+
+        private void CheckBoxListenARP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenARP.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
+        }
+
+        private void CheckBoxListenICMP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenICMP.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
+        }
+
+        private void CheckBoxListenIPv6_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenIPv6.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
+        }
+
+        private void CheckBoxListenIPv4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkingDisplayAll) return;
+            checkingListenSingle = true;
+            if (checkBoxListenAll.Checked && !checkBoxListenIPv4.Checked)
+                checkBoxListenAll.Checked = false;
+            checkingListenSingle = false;
         }
     }
 }
