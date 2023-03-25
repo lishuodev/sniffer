@@ -60,7 +60,7 @@ namespace WinSniffer
                             
                             if (tcp != null)
                             {
-                                pp.transportType = ProtocolType.Tcp;
+                                pp.protocolType = ProtocolType.Tcp;
                                 pp.tcpPacket = tcp;
                                 pp.sourcePort = pp.tcpPacket.SourcePort;
                                 pp.destinationPort = pp.tcpPacket.DestinationPort;
@@ -95,7 +95,7 @@ namespace WinSniffer
                             UdpPacket udp = pp.packet.Extract<UdpPacket>();
                             if (udp != null)
                             {
-                                pp.transportType = ProtocolType.Udp;
+                                pp.protocolType = ProtocolType.Udp;
                                 pp.udpPacket = udp;
                                 pp.sourcePort = pp.udpPacket.SourcePort;
                                 pp.destinationPort = pp.udpPacket.DestinationPort;
@@ -130,7 +130,7 @@ namespace WinSniffer
                             IcmpV4Packet icmpv4 = pp.packet.Extract<IcmpV4Packet>();
                             if (icmpv4 != null)
                             {
-                                pp.transportType = ProtocolType.Icmp;
+                                pp.protocolType = ProtocolType.Icmp;
                                 pp.icmpv4Packet = icmpv4;
                                 if (pp.icmpv4Packet.HasPayloadPacket)
                                 {
@@ -163,7 +163,7 @@ namespace WinSniffer
                             IcmpV6Packet icmpv6 = pp.packet.Extract<IcmpV6Packet>();
                             if (icmpv6 != null)
                             {
-                                pp.transportType = ProtocolType.IcmpV6;
+                                pp.protocolType = ProtocolType.IcmpV6;
                                 pp.icmpv6Packet = icmpv6;
                                 if (pp.icmpv6Packet.HasPayloadPacket)
                                 {
@@ -231,7 +231,7 @@ namespace WinSniffer
         public EthernetType ethernetType;       // 网络层协议
 
         // 传输层
-        public ProtocolType transportType;      // 传输层协议
+        public ProtocolType protocolType;      // 传输层协议
         public TcpPacket tcpPacket;
         public UdpPacket udpPacket;
 

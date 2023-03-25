@@ -95,6 +95,8 @@
             this.流追踪ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traceTCPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traceUDPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -167,7 +169,7 @@
             this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(383, 111);
+            this.listViewPacket.Size = new System.Drawing.Size(360, 145);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
@@ -182,7 +184,6 @@
             // columnTime
             // 
             this.columnTime.Text = "Time";
-            this.columnTime.Width = 50;
             // 
             // columnSrc
             // 
@@ -244,7 +245,7 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(0, 125);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 151);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -255,8 +256,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(748, 236);
-            this.splitContainer1.SplitterDistance = 111;
+            this.splitContainer1.Size = new System.Drawing.Size(704, 310);
+            this.splitContainer1.SplitterDistance = 145;
             this.splitContainer1.TabIndex = 14;
             // 
             // splitContainer3
@@ -273,8 +274,8 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.listViewTrace);
-            this.splitContainer3.Size = new System.Drawing.Size(748, 111);
-            this.splitContainer3.SplitterDistance = 383;
+            this.splitContainer3.Size = new System.Drawing.Size(704, 145);
+            this.splitContainer3.SplitterDistance = 360;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 12;
             // 
@@ -298,7 +299,7 @@
             this.listViewTrace.Margin = new System.Windows.Forms.Padding(2);
             this.listViewTrace.MultiSelect = false;
             this.listViewTrace.Name = "listViewTrace";
-            this.listViewTrace.Size = new System.Drawing.Size(363, 111);
+            this.listViewTrace.Size = new System.Drawing.Size(342, 145);
             this.listViewTrace.TabIndex = 12;
             this.listViewTrace.UseCompatibleStateImageBehavior = false;
             this.listViewTrace.View = System.Windows.Forms.View.Details;
@@ -312,7 +313,6 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Time";
-            this.columnHeader2.Width = 50;
             // 
             // columnHeader3
             // 
@@ -355,13 +355,13 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.textBoxBinary);
+            this.splitContainer2.Panel1.Controls.Add(this.listBoxParse);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.listBoxParse);
-            this.splitContainer2.Size = new System.Drawing.Size(748, 121);
-            this.splitContainer2.SplitterDistance = 383;
+            this.splitContainer2.Panel2.Controls.Add(this.textBoxBinary);
+            this.splitContainer2.Size = new System.Drawing.Size(704, 161);
+            this.splitContainer2.SplitterDistance = 360;
             this.splitContainer2.TabIndex = 0;
             // 
             // textBoxBinary
@@ -373,7 +373,7 @@
             this.textBoxBinary.Name = "textBoxBinary";
             this.textBoxBinary.ReadOnly = true;
             this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxBinary.Size = new System.Drawing.Size(383, 121);
+            this.textBoxBinary.Size = new System.Drawing.Size(340, 161);
             this.textBoxBinary.TabIndex = 0;
             this.textBoxBinary.WordWrap = false;
             // 
@@ -385,8 +385,9 @@
             this.listBoxParse.ItemHeight = 12;
             this.listBoxParse.Location = new System.Drawing.Point(0, 0);
             this.listBoxParse.Name = "listBoxParse";
-            this.listBoxParse.Size = new System.Drawing.Size(361, 121);
+            this.listBoxParse.Size = new System.Drawing.Size(360, 161);
             this.listBoxParse.TabIndex = 0;
+            this.listBoxParse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListBoxParse_MouseClick);
             // 
             // checkBoxPromiscuous
             // 
@@ -414,6 +415,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox5);
             this.panel1.Controls.Add(this.groupBox1);
@@ -428,7 +431,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(704, 361);
+            this.panel1.Size = new System.Drawing.Size(704, 461);
             this.panel1.TabIndex = 19;
             // 
             // groupBox2
@@ -844,11 +847,30 @@
             this.traceUDPToolStripMenuItem.Text = "UDP流";
             this.traceUDPToolStripMenuItem.Click += new System.EventHandler(this.TraceUDPToolStripMenuItem_Click);
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 129);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 12);
+            this.label7.TabIndex = 25;
+            this.label7.Text = "过滤数据";
+            // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(631, 129);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 12);
+            this.label8.TabIndex = 26;
+            this.label8.Text = "流追踪数据";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 361);
+            this.ClientSize = new System.Drawing.Size(704, 461);
             this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(720, 400);
@@ -865,8 +887,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -949,6 +971,8 @@
         private System.Windows.Forms.CheckBox checkBoxDisplayAll;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox checkBoxListenAll;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
     }
 }
 

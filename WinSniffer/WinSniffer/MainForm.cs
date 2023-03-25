@@ -48,7 +48,6 @@ namespace WinSniffer
         private List<CheckBox> disableList;     // 开始后禁用列表
         private List<CheckBox> checkBoxListenList;  // 监听过滤
         private List<CheckBox> checkBoxDisplayList; // 显示过滤
-        private ListViewItem curItem;           // 选中列表项
         private TraceForm traceForm;            // 流追踪窗口
 
         private bool checkingDisplayAll = false;
@@ -56,6 +55,8 @@ namespace WinSniffer
 
         private bool checkingListenAll = false;
         private bool checkingListenSingle = false;
+
+        private bool folding = false;
 
         public MainForm()
         {
@@ -370,44 +371,55 @@ namespace WinSniffer
                     listBoxParse.Items.Clear();
                     ParsedPacket pp = parsedPacketDict[selectFrame];
 
-                    string s1 = string.Format("▶ Frame {0}: {1} bytes ({2} bits) on interface {3}", selectFrame, pp.length, pp.length * 8, device.Name);
+                    string s1 = string.Format("＞ [1] Frame {0}: {1} bytes ({2} bits) on interface {3}", selectFrame, pp.length, pp.length * 8, device.Name);
                     listBoxParse.Items.Add(s1);
 
-                    string s2 = string.Format("▶ {0}, Src: ({1}), Dst: ({2}), ", pp.linkLayerType, BitConverter.ToString(pp.sourceMac.GetAddressBytes()).Replace("-", ":"), BitConverter.ToString(pp.destinationMac.GetAddressBytes()).Replace("-", ":"), pp.ethernetType);
+                    string s2 = string.Format("＞ [2] {0}, Src: ({1}), Dst: ({2}), ", pp.linkLayerType, BitConverter.ToString(pp.sourceMac.GetAddressBytes()).Replace("-", ":"), BitConverter.ToString(pp.destinationMac.GetAddressBytes()).Replace("-", ":"), pp.ethernetType);
                     listBoxParse.Items.Add(s2);
 
                     // Type:{3}(0x{4})
                     // pp.ethernetType.ToString("X").PadLeft(4)
+                    switch (pp.ethernetType)
+                    {
+                        case EthernetType.IPv4:
+                        case EthernetType.IPv6:
+                            string sip = string.Format("＞ [3] {0}, Src: {1}, Dst: {2}", pp.ethernetType, pp.sourceAddress.ToString(), pp.destinationAddress.ToString());
+                            listBoxParse.Items.Add(sip);
+                            break;
+                        case EthernetType.Arp:
+                            string sarp = string.Format("＞ [3] {0} ({1})", pp.ethernetType, pp.arpPacket.Operation);
+                            listBoxParse.Items.Add(sarp);
+                            break;
+                    }
 
-                    string s3 = string.Format("▶ {0}, Src: {1}, Dst: {2}", pp.ethernetType, pp.sourceAddress.ToString(), pp.destinationAddress.ToString());
-                    listBoxParse.Items.Add(s3);
-
-                    switch (pp.transportType)
+                    switch (pp.protocolType)
                     {
                         case ProtocolType.Tcp:
-                            string stcp = string.Format("▶ {0}, Src Port: {1}, Dst Prot: {2}, Seq: {3}, Len: {4}", pp.transportType, pp.sourcePort, pp.destinationPort, pp.tcpPacket.SequenceNumber, pp.tcpPacket.AcknowledgmentNumber);
+                            string stcp = string.Format("＞ [4] {0}, Src Port: {1}, Dst Prot: {2}, Seq: {3}, Len: {4}", pp.protocolType, pp.sourcePort, pp.destinationPort, pp.tcpPacket.SequenceNumber, pp.tcpPacket.PayloadDataSegment.Length);
                             listBoxParse.Items.Add(stcp);
                             break;
                         case ProtocolType.Udp:
-                            string sudp = string.Format("▶ {0}, Src Port: {1}, Dst Prot: {2}", pp.transportType, pp.sourcePort, pp.destinationPort);
+                            string sudp = string.Format("＞ [4] {0}, Src Port: {1}, Dst Prot: {2}", pp.protocolType, pp.sourcePort, pp.destinationPort);
                             listBoxParse.Items.Add(sudp);
                             break;
                         case ProtocolType.Icmp:
                         case ProtocolType.IcmpV6:
-                            string sicmp = string.Format("▶ {0}", pp.transportType);
+                            string sicmp = string.Format("＞ [4] {0}", pp.protocolType);
                             listBoxParse.Items.Add(sicmp);
                             break;
                     }
 
-                    if (pp.transportType == ProtocolType.Tcp)
+                    if (pp.protocolType == ProtocolType.Tcp)
                     {
-                        if (pp.sourcePort == 443) // TLS
+                        if (pp.sourcePort == 443 || pp.destinationPort == 443) // TLS
                         {
-                            string stls = string.Format("Transport Layer Security");
+                            string stls = string.Format("＞ [5] Transport Layer Security");
                             listBoxParse.Items.Add(stls);
                         }
                     }
 
+                    /*
+                    
                     listBoxParse.Items.Add("--------------------");
                     listBoxParse.Items.Add("Data Link Layer");
                     listBoxParse.Items.Add("--------------------");
@@ -563,6 +575,7 @@ namespace WinSniffer
                             }
                             break;
                     }
+                    */
                 }
             }
         }
@@ -633,13 +646,20 @@ namespace WinSniffer
             OnSelectPacketChanged(sender);
         }
 
+        private void ListBoxParse_MouseClick(object sender, MouseEventArgs e)
+        {
+            int index = listBoxParse.IndexFromPoint(e.Location);
+            if (index < 0 || index >= listBoxParse.Items.Count)
+                listBoxParse.ClearSelected();
+            FoldListBoxParse();
+        }
+
         // 列表项上弹出右键菜单
         private void ListViewPacket_MouseClick(object sender, MouseEventArgs e)
         {
             ListViewItem item = listViewPacket.GetItemAt(e.X, e.Y);
             if (item != null && e.Button == MouseButtons.Right)
             {
-                curItem = item;
                 int frame = int.Parse(item.SubItems[0].Text);
 
                 tracePacket = parsedPacketDict[frame];
@@ -650,7 +670,7 @@ namespace WinSniffer
                 {
                     case EthernetType.IPv4:
                     case EthernetType.IPv6:
-                        switch (tracePacket.transportType)
+                        switch (tracePacket.protocolType)
                         {
                             case ProtocolType.Tcp:
                                 traceTCPToolStripMenuItem.Enabled = true;
@@ -713,7 +733,7 @@ namespace WinSniffer
         private bool Match(ParsedPacket a, ParsedPacket b)
         {
             if (a.ethernetType != b.ethernetType) return false;
-            if (a.transportType != b.transportType) return false;
+            if (a.protocolType != b.protocolType) return false;
             if (!(a.ethernetType == EthernetType.IPv4 || a.ethernetType == EthernetType.IPv6)) return false;
 
             if (a.sourceAddress.Equals(b.sourceAddress) && a.destinationAddress.Equals(b.destinationAddress))
@@ -762,9 +782,9 @@ namespace WinSniffer
             }
             item.SubItems.Add(parsed.length.ToString());
             item.SubItems.Add(parsed.ethernetType.ToString());
-            item.SubItems.Add(parsed.transportType.ToString());
+            item.SubItems.Add(parsed.protocolType.ToString());
 
-            switch (parsed.transportType)
+            switch (parsed.protocolType)
             {
                 case ProtocolType.Tcp:
                     item.SubItems.Add(parsed.tcpPacket.SourcePort.ToString());
@@ -840,12 +860,12 @@ namespace WinSniffer
             if (checkBoxDisplayAll.Checked) return true;
             if (checkBoxDisplayIPv4.Checked && packet.ethernetType == EthernetType.IPv4) return true;
             if (checkBoxDisplayIPv6.Checked && packet.ethernetType == EthernetType.IPv6) return true;
-            if (checkBoxDisplayTCP.Checked && packet.transportType == ProtocolType.Tcp) return true;
-            if (checkBoxDisplayUDP.Checked && packet.transportType == ProtocolType.Udp) return true;
+            if (checkBoxDisplayTCP.Checked && packet.protocolType == ProtocolType.Tcp) return true;
+            if (checkBoxDisplayUDP.Checked && packet.protocolType == ProtocolType.Udp) return true;
             if (checkBoxDisplayARP.Checked && packet.ethernetType == EthernetType.Arp) return true;
-            if (checkBoxDisplayICMP.Checked && (packet.transportType == ProtocolType.Icmp || packet.transportType == ProtocolType.IcmpV6)) return true;
-            if (checkBoxDisplayTLS.Checked && packet.transportType == ProtocolType.Tcp && (packet.sourcePort == 443 || packet.destinationPort == 443)) return true;
-            if (checkBoxDisplayHTTP.Checked && packet.transportType == ProtocolType.Tcp && (packet.sourcePort == 80 || packet.destinationPort == 80)) return true;
+            if (checkBoxDisplayICMP.Checked && (packet.protocolType == ProtocolType.Icmp || packet.protocolType == ProtocolType.IcmpV6)) return true;
+            if (checkBoxDisplayTLS.Checked && packet.protocolType == ProtocolType.Tcp && (packet.sourcePort == 443 || packet.destinationPort == 443)) return true;
+            if (checkBoxDisplayHTTP.Checked && packet.protocolType == ProtocolType.Tcp && (packet.sourcePort == 80 || packet.destinationPort == 80)) return true;
 
             return false;
         }
@@ -967,7 +987,7 @@ namespace WinSniffer
 
         private void CheckBoxListenHTTP_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkingDisplayAll) return;
+            if (checkingListenAll) return;
             checkingListenSingle = true;
             if (checkBoxListenAll.Checked && !checkBoxListenHTTP.Checked)
                 checkBoxListenAll.Checked = false;
@@ -976,7 +996,7 @@ namespace WinSniffer
 
         private void CheckBoxListenTLS_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkingDisplayAll) return;
+            if (checkingListenAll) return;
             checkingListenSingle = true;
             if (checkBoxListenAll.Checked && !checkBoxListenTLS.Checked)
                 checkBoxListenAll.Checked = false;
@@ -994,7 +1014,7 @@ namespace WinSniffer
 
         private void CheckBoxListenTCP_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkingDisplayAll) return;
+            if (checkingListenAll) return;
             checkingListenSingle = true;
             if (checkBoxListenAll.Checked && !checkBoxListenTCP.Checked)
                 checkBoxListenAll.Checked = false;
@@ -1003,7 +1023,7 @@ namespace WinSniffer
 
         private void CheckBoxListenARP_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkingDisplayAll) return;
+            if (checkingListenAll) return;
             checkingListenSingle = true;
             if (checkBoxListenAll.Checked && !checkBoxListenARP.Checked)
                 checkBoxListenAll.Checked = false;
@@ -1012,7 +1032,7 @@ namespace WinSniffer
 
         private void CheckBoxListenICMP_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkingDisplayAll) return;
+            if (checkingListenAll) return;
             checkingListenSingle = true;
             if (checkBoxListenAll.Checked && !checkBoxListenICMP.Checked)
                 checkBoxListenAll.Checked = false;
@@ -1021,7 +1041,7 @@ namespace WinSniffer
 
         private void CheckBoxListenIPv6_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkingDisplayAll) return;
+            if (checkingListenAll) return;
             checkingListenSingle = true;
             if (checkBoxListenAll.Checked && !checkBoxListenIPv6.Checked)
                 checkBoxListenAll.Checked = false;
@@ -1030,11 +1050,217 @@ namespace WinSniffer
 
         private void CheckBoxListenIPv4_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkingDisplayAll) return;
+            if (checkingListenAll) return;
             checkingListenSingle = true;
             if (checkBoxListenAll.Checked && !checkBoxListenIPv4.Checked)
                 checkBoxListenAll.Checked = false;
             checkingListenSingle = false;
+        }
+
+        private void FoldListBoxParse() 
+        { 
+            if (folding) return;
+            if (listBoxParse.SelectedItem == null) return;
+            string s = listBoxParse.SelectedItem as string;
+            int index = listBoxParse.SelectedIndex;
+            ParsedPacket packet = parsedPacketDict[selectFrame];
+            string tab = "       ";
+            if (s.StartsWith("＞"))
+            {
+                folding = true;
+                
+                listBoxParse.Items.RemoveAt(index);
+                listBoxParse.Items.Insert(index, s.Replace("＞", "∨"));
+                listBoxParse.SelectedIndex = index;
+                string c = s.Substring(3, 1);
+                int id = int.Parse(c);
+                switch (id)
+                {
+                    case 1:
+                        // Interface name:
+                        // Interface description:
+                        // Encapsulation Type: Ethernet (1)
+                        // Arrival Time: Mar 25, 2023 20:38:06.xxxxxxxxx XXX时间
+                        // Epoch Time: xxx.xxx seconds
+                        // Frame Number: x
+                        // Frame Length: xxx bytes (xxx bits)
+                        // Capture Length: xxx bytes (xxx bits)
+                        listBoxParse.Items.Insert(index + 1, string.Format("{0}Interface name: {1}", tab, device.Name));
+                        listBoxParse.Items.Insert(index + 2, string.Format("{0}Interface description: {1}", tab, device.Description));
+                        listBoxParse.Items.Insert(index + 3, string.Format("{0}Encapsulation Type: {1}", tab, packet.linkLayerType));
+                        listBoxParse.Items.Insert(index + 4, string.Format("{0}Epoch Time: {1} seconds", tab, packet.timeval));
+                        listBoxParse.Items.Insert(index + 5, string.Format("{0}Frame Number: {1}", tab, packet.frame));
+                        listBoxParse.Items.Insert(index + 6, string.Format("{0}Frame Length: {1} bytes ({2} bits)", tab, packet.length, packet.length * 8));
+                        break;
+                    case 2:
+                        listBoxParse.Items.Insert(index + 1, string.Format("{0}Destination: {1}", tab, BitConverter.ToString(packet.destinationMac.GetAddressBytes()).Replace("-", ":")));
+                        listBoxParse.Items.Insert(index + 2, string.Format("{0}Source: {1}", tab, BitConverter.ToString(packet.sourceMac.GetAddressBytes()).Replace("-", ":")));
+                        listBoxParse.Items.Insert(index + 3, string.Format("{0}Type: {1} (0x{2})", tab, packet.ethernetType, packet.ethernetType.ToString("X").PadLeft(4)));
+                        break;
+
+                    case 3:
+                        switch (packet.ethernetType)
+                        {
+                            case EthernetType.IPv4:
+                                listBoxParse.Items.Insert(index + 1, string.Format("{0}Version: {1} ({2})", tab, packet.ipv4Packet.Version, (int)packet.ipv4Packet.Version));
+                                listBoxParse.Items.Insert(index + 2, string.Format("{0}Header Length: {1} bytes ({2})", tab, packet.ipv4Packet.HeaderLength * 4, packet.ipv4Packet.HeaderLength));
+                                listBoxParse.Items.Insert(index + 3, string.Format("{0}Total Length: {1}", tab, packet.ipv4Packet.TotalLength));
+                                listBoxParse.Items.Insert(index + 4, string.Format("{0}Identification: 0x{1} ({2})", tab, packet.ipv4Packet.Id.ToString("X").PadLeft(4, '0'), packet.ipv4Packet.Id));
+                                listBoxParse.Items.Insert(index + 5, string.Format("{0}Flags: {1}", tab, packet.ipv4Packet.FragmentFlags.ToString("X").PadLeft(2, '0')));
+                                listBoxParse.Items.Insert(index + 6, string.Format("{0}Fragment Offset: {1}", tab, packet.ipv4Packet.FragmentOffset));
+                                listBoxParse.Items.Insert(index + 7, string.Format("{0}Time to Live: {1}", tab, packet.ipv4Packet.TimeToLive));
+                                listBoxParse.Items.Insert(index + 8, string.Format("{0}Protocol: {1} ({2})", tab, packet.ipv4Packet.Protocol, (int)packet.ipv4Packet.Protocol));
+                                listBoxParse.Items.Insert(index + 9, string.Format("{0}Header Checksum: 0x{1}", tab, packet.ipv4Packet.Checksum.ToString("X").PadLeft(2, '0')));
+                                listBoxParse.Items.Insert(index + 10, string.Format("{0}Source Address: {1}", tab, packet.ipv4Packet.SourceAddress));
+                                listBoxParse.Items.Insert(index + 11, string.Format("{0}Destination Address: {1}", tab, packet.ipv4Packet.DestinationAddress));
+                                break;
+                            case EthernetType.IPv6:
+                                listBoxParse.Items.Insert(index + 1, string.Format("{0}Version: {1} ({2})", tab, packet.ipv6Packet.Version, (int)packet.ipv6Packet.Version));
+                                listBoxParse.Items.Insert(index + 2, string.Format("{0}Traffic Class: 0x{1}", tab, packet.ipv6Packet.TrafficClass.ToString("X").PadLeft(2, '0')));
+                                listBoxParse.Items.Insert(index + 3, string.Format("{0}Flow Label: 0x{1}", tab, packet.ipv6Packet.FlowLabel.ToString("X").PadLeft(2, '0')));
+                                listBoxParse.Items.Insert(index + 4, string.Format("{0}Payload Length: {1}", tab, packet.ipv6Packet.PayloadLength));
+                                listBoxParse.Items.Insert(index + 5, string.Format("{0}Next Header: {1} ({2})", tab, packet.ipv6Packet.NextHeader, (int)packet.ipv6Packet.NextHeader));
+                                listBoxParse.Items.Insert(index + 6, string.Format("{0}Hop Limit: {1}", tab, packet.ipv6Packet.HopLimit));
+                                listBoxParse.Items.Insert(index + 7, string.Format("{0}Source Address: {1}", tab, packet.ipv6Packet.SourceAddress));
+                                listBoxParse.Items.Insert(index + 8, string.Format("{0}Destination Address: {1}", tab, packet.ipv6Packet.DestinationAddress));
+                                break;
+                            case EthernetType.Arp:
+                                listBoxParse.Items.Insert(index + 1, string.Format("{0}Hardware Type: {1} ({2})", tab, packet.arpPacket.HardwareAddressType, (int)packet.arpPacket.HardwareAddressType));
+                                listBoxParse.Items.Insert(index + 2, string.Format("{0}Protocl Type: {1} (0x{2})", tab, packet.arpPacket.ProtocolAddressType, packet.arpPacket.ProtocolAddressType.ToString("X").PadLeft(4, '0')));
+                                listBoxParse.Items.Insert(index + 3, string.Format("{0}Hardware Size: {1}", tab, packet.arpPacket.HardwareAddressLength));
+                                listBoxParse.Items.Insert(index + 4, string.Format("{0}Protocl Size: {1}", tab, packet.arpPacket.ProtocolAddressLength));
+                                listBoxParse.Items.Insert(index + 5, string.Format("{0}Opcode: {1} ({2})", tab, packet.arpPacket.Operation, (int)packet.arpPacket.Operation));
+                                listBoxParse.Items.Insert(index + 6, string.Format("{0}Sender MAC Address: {1}", tab, BitConverter.ToString(packet.arpPacket.SenderHardwareAddress.GetAddressBytes()).Replace("-", ":")));
+                                listBoxParse.Items.Insert(index + 7, string.Format("{0}Sender IP Address: {1}", tab, packet.arpPacket.SenderProtocolAddress));
+                                listBoxParse.Items.Insert(index + 8, string.Format("{0}Target MAC Address: {1}", tab, BitConverter.ToString(packet.arpPacket.TargetHardwareAddress.GetAddressBytes()).Replace("-", ":")));
+                                listBoxParse.Items.Insert(index + 9, string.Format("{0}Target IP Address: {1}", tab, packet.arpPacket.TargetProtocolAddress));
+                                break;
+                        }
+                        break;
+
+                    case 4:
+                        switch (packet.protocolType)
+                        {
+                            case ProtocolType.Tcp:
+                                listBoxParse.Items.Insert(index + 1, string.Format("{0}Source Port: {1}", tab, packet.tcpPacket.SourcePort));
+                                listBoxParse.Items.Insert(index + 2, string.Format("{0}Destination Port: {1}", tab, packet.tcpPacket.DestinationPort));
+                                listBoxParse.Items.Insert(index + 3, string.Format("{0}Sequence Number: {1}", tab, packet.tcpPacket.SequenceNumber));
+                                listBoxParse.Items.Insert(index + 4, string.Format("{0}Acknowledgment Number: {1}", tab, packet.tcpPacket.AcknowledgmentNumber));
+                                listBoxParse.Items.Insert(index + 5, string.Format("{0}Header Length: {1} bytes ({2})", tab, packet.tcpPacket.HeaderSegment.Length * 4, packet.tcpPacket.HeaderSegment.Length));
+                                listBoxParse.Items.Insert(index + 6, string.Format("{0}Flags: 0x{1}", tab, packet.tcpPacket.Flags.ToString("X").PadLeft(3, '0')));
+                                listBoxParse.Items.Insert(index + 7, string.Format("{0}Window: {1}", tab, packet.tcpPacket.WindowSize));
+                                listBoxParse.Items.Insert(index + 8, string.Format("{0}Checksum: 0x{1}", tab, packet.tcpPacket.Checksum.ToString("X").PadLeft(4, '0')));
+                                listBoxParse.Items.Insert(index + 9, string.Format("{0}Urgent Pointer: {1}", tab, packet.tcpPacket.UrgentPointer));
+                                listBoxParse.Items.Insert(index + 10, string.Format("{0}Options: ({1} bytes)", tab, packet.tcpPacket.Options.Length));
+                                listBoxParse.Items.Insert(index + 11, string.Format("{0}TCP payload: ({1} bytes)", tab, packet.tcpPacket.PayloadData.Length));
+                                break;
+                            case ProtocolType.Udp:
+                                listBoxParse.Items.Insert(index + 1, string.Format("{0}Source Port: {1}", tab, packet.udpPacket.SourcePort));
+                                listBoxParse.Items.Insert(index + 2, string.Format("{0}Destination Port: {1}", tab, packet.udpPacket.DestinationPort));
+                                listBoxParse.Items.Insert(index + 3, string.Format("{0}Length: {1}", tab, packet.udpPacket.Length));
+                                listBoxParse.Items.Insert(index + 4, string.Format("{0}Checksum: 0x{1}", tab, packet.udpPacket.Checksum.ToString("X").PadLeft(4, '0')));
+                                listBoxParse.Items.Insert(index + 5, string.Format("{0}UDP payload: ({1} bytes)", tab, packet.udpPacket.PayloadData.Length));
+                                break;
+                            case ProtocolType.Icmp:
+                                break;
+                            case ProtocolType.IcmpV6:
+                                listBoxParse.Items.Insert(index + 1, string.Format("{0}Type: {1} ({2})", tab, packet.icmpv6Packet.Type, (int)packet.icmpv6Packet.Type));
+                                listBoxParse.Items.Insert(index + 2, string.Format("{0}Code: {1}", tab, packet.icmpv6Packet.Code));
+                                listBoxParse.Items.Insert(index + 3, string.Format("{0}Checksum: 0x{1}", tab, packet.icmpv6Packet.Checksum.ToString("X").PadLeft(4, '0')));
+                                // Flags
+                                // Target Address
+                                // ICMPv6 Option
+                                break;
+                        }
+                        break;
+
+                    case 5:
+                        break;
+                }
+
+                folding = false;
+
+            }
+            else if (s.StartsWith("∨"))
+            {
+                folding = true;
+
+                listBoxParse.Items.RemoveAt(index);
+                listBoxParse.Items.Insert(index, s.Replace("∨", "＞"));
+                listBoxParse.SelectedIndex = index;
+                string c = s.Substring(3, 1);
+                int id = int.Parse(c);
+                switch (id)
+                {
+                    case 1:
+                        for (int i = 6; i > 0; i--)
+                        {
+                            listBoxParse.Items.RemoveAt(index + i);
+                        }
+                        break;
+                    case 2:
+                        for (int i = 3; i > 0; i--)
+                        {
+                            listBoxParse.Items.RemoveAt(index + i);
+                        }
+                        break;
+
+                    case 3:
+                        switch (packet.ethernetType)
+                        {
+                            case EthernetType.IPv4:
+                                for (int i = 11; i > 0; i--)
+                                {
+                                    listBoxParse.Items.RemoveAt(index + i);
+                                }
+                                break;
+                            case EthernetType.IPv6:
+                                for (int i = 8; i > 0; i--)
+                                {
+                                    listBoxParse.Items.RemoveAt(index + i);
+                                }
+                                break;
+                            case EthernetType.Arp:
+                                for (int i = 9; i > 0; i--)
+                                {
+                                    listBoxParse.Items.RemoveAt(index + i);
+                                }
+                                break;
+                        }
+                        break;
+
+                    case 4:
+                        switch (packet.protocolType)
+                        {
+                            case ProtocolType.Tcp:
+                                for (int i = 11; i > 0; i--)
+                                {
+                                    listBoxParse.Items.RemoveAt(index + i);
+                                }
+                                break;
+                            case ProtocolType.Udp:
+                                for (int i = 5; i > 0; i--)
+                                {
+                                    listBoxParse.Items.RemoveAt(index + i);
+                                }
+                                break;
+                            case ProtocolType.Icmp:
+                                break;
+                            case ProtocolType.IcmpV6:
+                                for (int i = 3; i > 0; i--)
+                                {
+                                    listBoxParse.Items.RemoveAt(index + i);
+                                }
+                                break;
+                        }
+                        break;
+
+                    case 5:
+                        break;
+                }
+                
+                folding = false;
+            }
         }
     }
 }
