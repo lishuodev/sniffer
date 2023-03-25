@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="PacketDotNet, Version=1.4.7.0, Culture=neutral, PublicKeyToken=451414c7667b2a58, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\net47\PacketDotNet.dll</HintPath>
+      <HintPath>bin\Debug\PacketDotNet.dll</HintPath>
     </Reference>
     <Reference Include="SharpPcap, Version=6.2.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
