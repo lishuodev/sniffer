@@ -19,10 +19,12 @@ namespace WinSniffer.ProtocolAnalyzer
     {
         public static EthernetInfo Analyze(byte[] data)
         {
-            EthernetInfo info = new EthernetInfo();
-            info.destinationMac = new PhysicalAddress(data.Take(6).ToArray());
-            info.sourceMac = new PhysicalAddress(data.Skip(6).Take(6).ToArray());
-            info.etherType = (ushort)((data[12] << 8) | data[13]);
+            EthernetInfo info = new EthernetInfo
+            {
+                destinationMac = new PhysicalAddress(data.Take(6).ToArray()),
+                sourceMac = new PhysicalAddress(data.Skip(6).Take(6).ToArray()),
+                etherType = (ushort)((data[12] << 8) | data[13])
+            };
             return info;
         }
 
@@ -32,12 +34,10 @@ namespace WinSniffer.ProtocolAnalyzer
             string space3 = "   ";
             StringBuilder sb = new StringBuilder();
             StringBuilder asc = new StringBuilder();
-            byte b = 0x00;
-
             for (int i = 0; i < data.Length; i++)
             {
                 // 准备数据
-                b = data[i];
+                byte b = data[i];
                 asc.Append((b >= 33 && b <= 126) ? Encoding.ASCII.GetString(new byte[1] { b }) : ".");
 
                 // 段号
@@ -84,11 +84,10 @@ namespace WinSniffer.ProtocolAnalyzer
             string space3 = "   ";
             StringBuilder sb = new StringBuilder();
             StringBuilder asc = new StringBuilder();
-            byte b = 0x00;
             for (int i = 0; i < data.Length; i++)
             {
                 // 准备数据
-                b = data[i];
+                byte b = data[i];
                 asc.Append((b >= 33 && b <= 126) ? Encoding.ASCII.GetString(new byte[1] { b }) : ".");
                 
                 // 段号

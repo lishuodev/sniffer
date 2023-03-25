@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using PacketDotNet;
+﻿using PacketDotNet;
 using SharpPcap;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Windows.Forms;
 using WinSniffer.ProtocolAnalyzer;
 
 namespace WinSniffer
@@ -26,7 +17,9 @@ namespace WinSniffer
         private PacketArrivalEventHandler arrivalEventHandler; // 包到达事件处理句柄
         private CaptureStoppedEventHandler captureStoppedEventHandler; // 停止事件处理句柄
         private readonly object queueLock = new object(); // 队列锁
-        private readonly object parsedLock = new object(); // 队列锁
+        private readonly object parsedListLock = new object(); // 队列锁
+        private readonly object listViewLock = new object();
+        private readonly object parsedDictLock = new object();
 
         // 状态
         private bool analyzeThreadStop = false;
@@ -51,7 +44,8 @@ namespace WinSniffer
         private int selectIndex;            // 选中数据包帧号
 
         // 控件
-        private List<CheckBox> checkBoxList;    // 复选框清单列表
+        private List<CheckBox> checkBoxList;    // 监听过滤
+        private List<CheckBox> checkBoxDisplayList; // 显示过滤
         private ListViewItem curItem;           // 选中列表项
         private TraceForm traceForm;            // 流追踪窗口
 
@@ -69,9 +63,16 @@ namespace WinSniffer
             listViewPacket.FullRowSelect = true;
             listViewTrace.FullRowSelect = true;
 
+            parsedPacketDict = new Dictionary<int, ParsedPacket>();
+
             checkBoxList = new List<CheckBox>
             {
                 checkBoxPromiscuous, checkBoxIPv4, checkBoxIPv6, checkBoxICMP, checkBoxARP, checkBoxTCP, checkBoxUDP, checkBoxTLS, checkBoxHTTP,
+            };
+
+            checkBoxDisplayList = new List<CheckBox>
+            {
+                checkBoxDisplayIPv4, checkBoxDisplayIPv6, checkBoxDisplayICMP, checkBoxDisplayARP, checkBoxDisplayTCP, checkBoxDisplayUDP, checkBoxDisplayTLS, checkBoxDisplayHTTP,
             };
 
             // 更新设备下拉列表
@@ -102,14 +103,8 @@ namespace WinSniffer
         private void ExitAfterThreadEnd()
         {
             StopCapture();
-            if (analyzerThread != null)
-            {
-                analyzerThread.Join();
-            }
-            if (listviewThread != null)
-            {
-                listviewThread.Join();
-            }
+            analyzerThread?.Abort();
+            listviewThread?.Abort();
             Application.Exit();
         }
 
@@ -117,7 +112,7 @@ namespace WinSniffer
         private void UpdateListView()
         {
             List<ParsedPacket> curList;
-            lock (parsedLock)
+            lock (parsedListLock)
             {
                 curList = parsedPacketList;
                 parsedPacketList = new List<ParsedPacket>();
@@ -142,7 +137,7 @@ namespace WinSniffer
             while (!listviewThreadStop)
             {
                 bool sleep = true;
-                lock (parsedLock)
+                lock (parsedListLock)
                 {
                     if (parsedPacketList.Count != 0)
                     {
@@ -167,7 +162,7 @@ namespace WinSniffer
                     {
                         BeginInvoke(new MethodInvoker(UpdateListView));
                     }
-                    catch (InvalidOperationException e)
+                    catch (InvalidOperationException)
                     {
 
                     }
@@ -182,7 +177,7 @@ namespace WinSniffer
             buttonStart.Enabled = true;
             buttonClear.Enabled = true;
             comboBoxDeviceList.Enabled = true;
-            
+
             foreach (var checkBox in checkBoxList)
             {
                 checkBox.Enabled = true;
@@ -215,7 +210,7 @@ namespace WinSniffer
             buttonStop.Enabled = true;
             buttonClear.Enabled = false;
             comboBoxDeviceList.Enabled = false;
-            
+
             foreach (var checkBox in checkBoxList)
             {
                 checkBox.Enabled = false;
@@ -320,10 +315,15 @@ namespace WinSniffer
 
                         ParsedPacket pp = NetParser.ParsePacket(frame, raw);
                         pp.time = raw.Timeval.Value - startTime.Value;
-                        parsedPacketDict.Add(frame, pp);
+
+                        lock (parsedDictLock)
+                        {
+                            parsedPacketDict.Add(frame, pp);
+                        }
+
                         rawDict.Add(frame, raw.Data);
 
-                        lock (parsedLock)
+                        lock (parsedListLock)
                         {
                             parsedPacketList.Add(pp);
                         }
@@ -521,13 +521,13 @@ namespace WinSniffer
         }
 
         // 停止按钮
-        private void buttonStop_Click(object sender, EventArgs e)
+        private void ButtonStop_Click(object sender, EventArgs e)
         {
             StopCapture();
         }
 
         // 开始按钮
-        private void buttonStart_Click(object sender, EventArgs e)
+        private void ButtonStart_Click(object sender, EventArgs e)
         {
             StartCapture();
         }
@@ -535,20 +535,20 @@ namespace WinSniffer
         private void Reset()
         {
             // 数据
-            if (parsedPacketDict != null) parsedPacketDict.Clear();
-            if (parsedPacketList != null) parsedPacketList.Clear();
-            if (rawDict != null) rawDict.Clear();
-            if (packetQueue != null) packetQueue.Clear();
+            parsedPacketDict?.Clear();
+            parsedPacketList?.Clear();
+            rawDict?.Clear();
+            packetQueue?.Clear();
 
             // 显示
-            if (listViewPacket.Items != null) listViewPacket.Items.Clear();
-            if (listViewTrace.Items != null) listViewTrace.Items.Clear();
-            if (listBoxParse.Items != null) listBoxParse.Items.Clear();
-            if (textBoxBinary !=null) textBoxBinary.Clear();
+            listViewPacket.Items?.Clear();
+            listViewTrace.Items?.Clear();
+            listBoxParse.Items?.Clear();
+            textBoxBinary?.Clear();
         }
 
         // 清空按钮
-        private void buttonClear_Click(object sender, EventArgs e)
+        private void ButtonClear_Click(object sender, EventArgs e)
         {
             var result = MessageBox.Show("确定要清空所有数据吗?", "清空", MessageBoxButtons.OKCancel);
             switch (result)
@@ -561,19 +561,20 @@ namespace WinSniffer
             }
         }
 
-        private void listViewPacket_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListViewPacket_SelectedIndexChanged(object sender, EventArgs e)
         {
             OnSelectPacketChanged(sender);
         }
 
         // 列表项上弹出右键菜单
-        private void listViewPacket_MouseClick(object sender, MouseEventArgs e)
+        private void ListViewPacket_MouseClick(object sender, MouseEventArgs e)
         {
             ListViewItem item = listViewPacket.GetItemAt(e.X, e.Y);
             if (item != null && e.Button == MouseButtons.Right)
             {
                 curItem = item;
-                int frame = curItem.Index + 1;
+                var sub = curItem.SubItems[0];
+                int frame = int.Parse(sub.Text);
                 tracePacket = parsedPacketDict[frame];
 
                 traceTCPToolStripMenuItem.Enabled = false;
@@ -598,14 +599,11 @@ namespace WinSniffer
         }
 
         // 右键菜单中点"TCP流"按钮
-        private void traceTCPToolStripMenuItem_Click(object sender, EventArgs e)
+        private void TraceTCPToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (tracePacket != null)
             {
                 tracing = true;
-
-                IPAddress sourceIP = tracePacket.sourceAddress;
-                IPAddress destinationIP = tracePacket.destinationAddress;
 
                 List<ParsedPacket> traceList = TraceIP(tracePacket);
 
@@ -614,21 +612,18 @@ namespace WinSniffer
 
                 DataCache.tracePacketList = traceList;
 
-                if (traceForm != null)
-                {
-                    traceForm.Close();
-                }
+                traceForm?.Close();
                 traceForm = new TraceForm();
                 traceForm.Show();
             }
         }
 
-        private void radioButtonBin_CheckedChanged(object sender, EventArgs e)
+        private void RadioButtonBin_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButtonBin.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintBin(rawDict[selectIndex]);
         }
 
-        private void radioButtonHex_CheckedChanged(object sender, EventArgs e)
+        private void RadioButtonHex_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButtonHex.Checked) textBoxBinary.Text = EthernetAnalyzer.PrintHex(rawDict[selectIndex]);
         }
@@ -669,80 +664,191 @@ namespace WinSniffer
             return true;
         }
 
+        private ListViewItem AppendPacketToListView(ParsedPacket parsed, ListView listView, bool checkMatch)
+        {
+            if (checkMatch && !tracing) return null;
+            if (!FilterPacket(parsed)) return null;
 
-        private ListViewItem AppendPacketListToListView(List<ParsedPacket> list, ListView curListView, bool checkMatch)
+            if (checkMatch && tracing)
+            {
+                if (!Match(parsed, tracePacket)) return null;
+            }
+
+            ListViewItem item = new ListViewItem(parsed.frame.ToString());
+            item.SubItems.Add(parsed.time.ToString());
+
+            switch (parsed.ethernetType)
+            {
+                case EthernetType.IPv4:
+                case EthernetType.IPv6:
+                    item.SubItems.Add(parsed.sourceAddress.ToString());
+                    item.SubItems.Add(parsed.destinationAddress.ToString());
+                    break;
+                case EthernetType.Arp:
+                    item.SubItems.Add(parsed.arpPacket.SenderProtocolAddress.ToString());
+                    item.SubItems.Add(parsed.arpPacket.TargetProtocolAddress.ToString());
+                    break;
+                default:
+                    item.SubItems.Add("");
+                    item.SubItems.Add("");
+                    break;
+            }
+            item.SubItems.Add(parsed.length.ToString());
+            item.SubItems.Add(parsed.ethernetType.ToString());
+            item.SubItems.Add(parsed.transportType.ToString());
+
+            switch (parsed.transportType)
+            {
+                case ProtocolType.Tcp:
+                    item.SubItems.Add(parsed.tcpPacket.SourcePort.ToString());
+                    item.SubItems.Add(parsed.tcpPacket.DestinationPort.ToString());
+                    break;
+                case ProtocolType.Udp:
+                    item.SubItems.Add(parsed.udpPacket.SourcePort.ToString());
+                    item.SubItems.Add(parsed.udpPacket.DestinationPort.ToString());
+                    break;
+            }
+
+            listView.Items.Add(item);
+            return item;
+        }
+
+
+        private ListViewItem AppendPacketListToListView(List<ParsedPacket> list, ListView listView, bool checkMatch)
         {
             if (checkMatch && !tracing) return null;
 
             ListViewItem item = null;
             ParsedPacket parsed;
-            for (int i = 0; i < list.Count; i++)
+
+            lock (listViewLock)
             {
-                parsed = list[i];
-
-                if (checkMatch && tracing)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if (!Match(parsed, tracePacket)) continue;
+                    parsed = list[i];
+                    item = AppendPacketToListView(parsed, listView, checkMatch);
                 }
-
-                item = new ListViewItem(parsed.frame.ToString());
-                item.SubItems.Add(parsed.time.ToString());
-
-                switch (parsed.ethernetType)
-                {
-                    case EthernetType.IPv4:
-                    case EthernetType.IPv6:
-                        item.SubItems.Add(parsed.sourceAddress.ToString());
-                        item.SubItems.Add(parsed.destinationAddress.ToString());
-                        break;
-                    case EthernetType.Arp:
-                        item.SubItems.Add(parsed.arpPacket.SenderProtocolAddress.ToString());
-                        item.SubItems.Add(parsed.arpPacket.TargetProtocolAddress.ToString());
-                        break;
-                    default:
-                        item.SubItems.Add("");
-                        item.SubItems.Add("");
-                        break;
-                }
-                item.SubItems.Add(parsed.length.ToString());
-                item.SubItems.Add(parsed.ethernetType.ToString());
-                item.SubItems.Add(parsed.transportType.ToString());
-
-                switch (parsed.transportType)
-                {
-                    case ProtocolType.Tcp:
-                        item.SubItems.Add(parsed.tcpPacket.SourcePort.ToString());
-                        item.SubItems.Add(parsed.tcpPacket.DestinationPort.ToString());
-                        break;
-                    case ProtocolType.Udp:
-                        item.SubItems.Add(parsed.udpPacket.SourcePort.ToString());
-                        item.SubItems.Add(parsed.udpPacket.DestinationPort.ToString());
-                        break;
-                }
-
-                curListView.Items.Add(item);
-
-                
             }
             return item;
         }
 
-        // 取消追踪
-        private void buttonCancelTrace_Click(object sender, EventArgs e)
-        {
-            tracing = false;
-
-            listViewTrace.Items.Clear();
-        }
-
-        private void listViewTrace_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListViewTrace_SelectedIndexChanged(object sender, EventArgs e)
         {
             OnSelectPacketChanged(sender);
         }
 
-        private void traceUDPToolStripMenuItem_Click(object sender, EventArgs e)
+        private void TraceUDPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            traceTCPToolStripMenuItem_Click(sender, e);
+            TraceTCPToolStripMenuItem_Click(sender, e);
+        }
+
+        // 重建listViewPacket
+        private void Rebuild()
+        {
+            lock (listViewLock)
+            {
+                listViewPacket.Items.Clear();
+                ParsedPacket packet;
+                ListViewItem item = null;
+
+                lock (parsedDictLock)
+                {
+                    for (int frame = 1; frame <= parsedPacketDict.Count; frame++)
+                    {
+                        packet = parsedPacketDict[frame];
+                        item = AppendPacketToListView(packet, listViewPacket, false);
+                    }
+                }
+
+                if (checkBoxAutoScroll.Checked)
+                {
+                    item?.EnsureVisible();
+                }
+            }
+        }
+
+        // 过滤
+        private bool FilterPacket(ParsedPacket packet)
+        {
+            if (checkBoxDisplayAll.Checked) return true;
+            if (checkBoxDisplayIPv4.Checked && packet.ethernetType == EthernetType.IPv4) return true;
+            if (checkBoxDisplayIPv6.Checked && packet.ethernetType == EthernetType.IPv6) return true;
+            if (checkBoxDisplayTCP.Checked && packet.transportType == ProtocolType.Tcp) return true;
+            if (checkBoxDisplayUDP.Checked && packet.transportType == ProtocolType.Udp) return true;
+            if (checkBoxDisplayARP.Checked && packet.ethernetType == EthernetType.Arp) return true;
+            if (checkBoxDisplayICMP.Checked && (packet.transportType == ProtocolType.Icmp || packet.transportType == ProtocolType.IcmpV6)) return true;
+            if (checkBoxDisplayTLS.Checked && packet.transportType == ProtocolType.Tcp && (packet.sourcePort == 443 || packet.destinationPort == 443)) return true;
+            if (checkBoxDisplayHTTP.Checked && packet.transportType == ProtocolType.Tcp && (packet.sourcePort == 80 || packet.destinationPort == 80)) return true;
+
+            return false;
+        }
+
+        private void CheckBoxDisplayIPv4_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayIPv4.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayIPv6_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayIPv6.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayICMP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayICMP.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayARP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayARP.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayTCP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayTCP.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayUDP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayUDP.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayTLS_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayTLS.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayHTTP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked && !checkBoxDisplayHTTP.Checked)
+                checkBoxDisplayAll.Checked = false;
+            Rebuild();
+        }
+
+        private void CheckBoxDisplayAll_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDisplayAll.Checked)
+            {
+                foreach (var checkbox in checkBoxDisplayList)
+                {
+                    checkbox.Checked = true;
+                }
+            }
+            Rebuild();
         }
     }
 }

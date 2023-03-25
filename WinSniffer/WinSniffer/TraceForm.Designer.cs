@@ -82,7 +82,7 @@
             this.buttonSearch.TabIndex = 3;
             this.buttonSearch.Text = "查找下一个";
             this.buttonSearch.UseVisualStyleBackColor = true;
-            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            this.buttonSearch.Click += new System.EventHandler(this.ButtonSearch_Click);
             // 
             // groupBox1
             // 
@@ -121,7 +121,7 @@
             this.buttonReturn.TabIndex = 6;
             this.buttonReturn.Text = "返回";
             this.buttonReturn.UseVisualStyleBackColor = true;
-            this.buttonReturn.Click += new System.EventHandler(this.buttonReturn_Click);
+            this.buttonReturn.Click += new System.EventHandler(this.ButtonReturn_Click);
             // 
             // comboBoxFormat
             // 
@@ -136,7 +136,7 @@
             this.comboBoxFormat.Name = "comboBoxFormat";
             this.comboBoxFormat.Size = new System.Drawing.Size(80, 20);
             this.comboBoxFormat.TabIndex = 5;
-            this.comboBoxFormat.SelectedIndexChanged += new System.EventHandler(this.comboBoxFormat_SelectedIndexChanged);
+            this.comboBoxFormat.SelectedIndexChanged += new System.EventHandler(this.ComboBoxFormat_SelectedIndexChanged);
             // 
             // comboBoxDirection
             // 
@@ -148,7 +148,7 @@
             this.comboBoxDirection.Name = "comboBoxDirection";
             this.comboBoxDirection.Size = new System.Drawing.Size(297, 20);
             this.comboBoxDirection.TabIndex = 4;
-            this.comboBoxDirection.SelectedIndexChanged += new System.EventHandler(this.comboBoxDirection_SelectedIndexChanged);
+            this.comboBoxDirection.SelectedIndexChanged += new System.EventHandler(this.ComboBoxDirection_SelectedIndexChanged);
             // 
             // labelIndex
             // 

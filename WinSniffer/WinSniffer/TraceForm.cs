@@ -29,8 +29,8 @@ namespace WinSniffer
             Bin = 1,
             Hex = 2,
         }
-        private Color masterColor = Color.DarkRed;
-        private Color slaveColor = Color.DarkBlue;
+        private readonly Color masterColor = Color.DarkBlue;
+        private readonly Color slaveColor = Color.DarkRed;
 
         private List<ParsedPacket> traceList;
         private Direction curDirection;
@@ -150,27 +150,26 @@ namespace WinSniffer
             }
         }
 
-        private void comboBoxFormat_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxFormat_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateData();
         }
 
-        private void buttonReturn_Click(object sender, EventArgs e)
+        private void ButtonReturn_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void comboBoxDirection_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
             curDirection = (Direction)comboBoxDirection.SelectedIndex;
             UpdateData();
         }
 
-        private void buttonSearch_Click(object sender, EventArgs e)
+        private void ButtonSearch_Click(object sender, EventArgs e)
         {
             string all = richTextBoxTrace.Text;
             string target = textBoxSearch.Text;
-            int length = target.Length;
             if (target.Equals(string.Empty) || all.Equals(string.Empty)) return;
 
             if (searchReset || !target.Equals(lastSearchString))
@@ -179,7 +178,7 @@ namespace WinSniffer
             }
             else
             {
-                NextSearch(all, target);
+                NextSearch(target);
             }
         }
 
@@ -204,10 +203,10 @@ namespace WinSniffer
             }
             while (index != -1);
 
-            NextSearch(all, target);
+            NextSearch(target);
         }
 
-        private void NextSearch(string all, string target)
+        private void NextSearch(string target)
         {
             if (indexList.Count > 0)
             {
