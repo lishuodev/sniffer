@@ -57,11 +57,13 @@
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.textBoxBinary = new System.Windows.Forms.TextBox();
             this.listBoxParse = new System.Windows.Forms.ListBox();
+            this.textBoxBinary = new System.Windows.Forms.TextBox();
             this.checkBoxPromiscuous = new System.Windows.Forms.CheckBox();
             this.checkBoxAutoScroll = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
             this.checkBoxDisplayAll = new System.Windows.Forms.CheckBox();
@@ -95,8 +97,6 @@
             this.流追踪ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traceTCPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.traceUDPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -169,7 +169,7 @@
             this.listViewPacket.Margin = new System.Windows.Forms.Padding(2);
             this.listViewPacket.MultiSelect = false;
             this.listViewPacket.Name = "listViewPacket";
-            this.listViewPacket.Size = new System.Drawing.Size(360, 145);
+            this.listViewPacket.Size = new System.Drawing.Size(360, 151);
             this.listViewPacket.TabIndex = 11;
             this.listViewPacket.UseCompatibleStateImageBehavior = false;
             this.listViewPacket.View = System.Windows.Forms.View.Details;
@@ -257,7 +257,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(704, 310);
-            this.splitContainer1.SplitterDistance = 145;
+            this.splitContainer1.SplitterDistance = 151;
             this.splitContainer1.TabIndex = 14;
             // 
             // splitContainer3
@@ -274,7 +274,7 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.listViewTrace);
-            this.splitContainer3.Size = new System.Drawing.Size(704, 145);
+            this.splitContainer3.Size = new System.Drawing.Size(704, 151);
             this.splitContainer3.SplitterDistance = 360;
             this.splitContainer3.SplitterWidth = 2;
             this.splitContainer3.TabIndex = 12;
@@ -299,7 +299,7 @@
             this.listViewTrace.Margin = new System.Windows.Forms.Padding(2);
             this.listViewTrace.MultiSelect = false;
             this.listViewTrace.Name = "listViewTrace";
-            this.listViewTrace.Size = new System.Drawing.Size(342, 145);
+            this.listViewTrace.Size = new System.Drawing.Size(342, 151);
             this.listViewTrace.TabIndex = 12;
             this.listViewTrace.UseCompatibleStateImageBehavior = false;
             this.listViewTrace.View = System.Windows.Forms.View.Details;
@@ -360,9 +360,21 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.textBoxBinary);
-            this.splitContainer2.Size = new System.Drawing.Size(704, 161);
+            this.splitContainer2.Size = new System.Drawing.Size(704, 155);
             this.splitContainer2.SplitterDistance = 360;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // listBoxParse
+            // 
+            this.listBoxParse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxParse.FormattingEnabled = true;
+            this.listBoxParse.HorizontalScrollbar = true;
+            this.listBoxParse.ItemHeight = 12;
+            this.listBoxParse.Location = new System.Drawing.Point(0, 0);
+            this.listBoxParse.Name = "listBoxParse";
+            this.listBoxParse.Size = new System.Drawing.Size(360, 155);
+            this.listBoxParse.TabIndex = 0;
+            this.listBoxParse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListBoxParse_MouseClick);
             // 
             // textBoxBinary
             // 
@@ -373,21 +385,9 @@
             this.textBoxBinary.Name = "textBoxBinary";
             this.textBoxBinary.ReadOnly = true;
             this.textBoxBinary.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxBinary.Size = new System.Drawing.Size(340, 161);
+            this.textBoxBinary.Size = new System.Drawing.Size(340, 155);
             this.textBoxBinary.TabIndex = 0;
             this.textBoxBinary.WordWrap = false;
-            // 
-            // listBoxParse
-            // 
-            this.listBoxParse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxParse.FormattingEnabled = true;
-            this.listBoxParse.HorizontalScrollbar = true;
-            this.listBoxParse.ItemHeight = 12;
-            this.listBoxParse.Location = new System.Drawing.Point(0, 0);
-            this.listBoxParse.Name = "listBoxParse";
-            this.listBoxParse.Size = new System.Drawing.Size(360, 161);
-            this.listBoxParse.TabIndex = 0;
-            this.listBoxParse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListBoxParse_MouseClick);
             // 
             // checkBoxPromiscuous
             // 
@@ -433,6 +433,25 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(704, 461);
             this.panel1.TabIndex = 19;
+            // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(631, 129);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 12);
+            this.label8.TabIndex = 26;
+            this.label8.Text = "流追踪数据";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 129);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 12);
+            this.label7.TabIndex = 25;
+            this.label7.Text = "过滤数据";
             // 
             // groupBox2
             // 
@@ -847,25 +866,6 @@
             this.traceUDPToolStripMenuItem.Text = "UDP流";
             this.traceUDPToolStripMenuItem.Click += new System.EventHandler(this.TraceUDPToolStripMenuItem_Click);
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 129);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(53, 12);
-            this.label7.TabIndex = 25;
-            this.label7.Text = "过滤数据";
-            // 
-            // label8
-            // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(631, 129);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(65, 12);
-            this.label8.TabIndex = 26;
-            this.label8.Text = "流追踪数据";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -876,6 +876,7 @@
             this.MinimumSize = new System.Drawing.Size(720, 400);
             this.Name = "MainForm";
             this.Text = "网络嗅探器";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);

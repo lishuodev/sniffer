@@ -354,7 +354,6 @@ namespace WinSniffer
             }
         }
 
-        // ▶▼▲◀
         // 选中一个数据包
         private void OnSelectPacketChanged(object sender)
         {

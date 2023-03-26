@@ -8,26 +8,8 @@ using System.Threading.Tasks;
 
 namespace WinSniffer.ProtocolAnalyzer
 {
-    public class EthernetInfo
-    {
-        public PhysicalAddress destinationMac;
-        public PhysicalAddress sourceMac;
-        public ushort etherType;
-    }
-
     public static class EthernetAnalyzer
     {
-        public static EthernetInfo Analyze(byte[] data)
-        {
-            EthernetInfo info = new EthernetInfo
-            {
-                destinationMac = new PhysicalAddress(data.Take(6).ToArray()),
-                sourceMac = new PhysicalAddress(data.Skip(6).Take(6).ToArray()),
-                etherType = (ushort)((data[12] << 8) | data[13])
-            };
-            return info;
-        }
-
         public static string PrintBin(byte[] data)
         {
             string space = " ";
